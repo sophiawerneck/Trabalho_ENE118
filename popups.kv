@@ -1,0 +1,81 @@
+#:kivy 2.3.0
+<ModbusPopup>:
+    title: "Configurações MODBUS"
+    size_hint_y: None
+    size_hint_x: 0.4
+    height: 200 # 200 pixels de altura
+    BoxLayout:
+        id: layout
+        orientation: 'vertical'
+        GridLayout:
+            cols: 2
+            rows: 2
+            Label:
+                text: "IP"
+                font_size: 14
+            TextInput:
+                id: txt_ip
+                text: "127.0.0.1" 
+                font_size: 14
+                halign: 'center'
+                valign: 'middle'
+            Label:
+                text: "Porta"
+                font_size: 14
+            TextInput:
+                id: txt_port
+                text: "502" # Porta padrão
+                font_size: 14
+                halign: 'center'
+                valign: 'middle'
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                size_hint_y: None
+                height: 40
+                text: "Conectar"
+                on_release: 
+                    root.clearInfo()
+                    app.root.startDataRead(txt_ip.text, int(txt_port.text))
+            Button:
+                size_hint_y: None
+                height: 40
+                text: "Fechar"
+                on_release:
+                    root.dismiss() # Para fechar a jaela popup
+                    root.clearInfo()
+
+<ScanPopup>:
+    title: "Configurações ScanTime"
+    size_hint_y: None
+    size_hint_x: 0.4
+    height: 150 # 150 pixels de altura
+    BoxLayout:
+        id: layout
+        orientation: 'vertical'
+        GridLayout:
+            cols: 2
+            rows: 1
+            Label:
+                text: "ScanTime [ms]"
+                font_size: 14
+            TextInput:
+                id: txt_st
+                font_size: 14
+                halign: 'center'
+                valign: 'middle'
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                size_hint_y: None
+                height: 40
+                text: "Configurar"
+                on_release: 
+                    app.root._scan_timer = int(txt_st.text)
+                    print(app.root._scan_timer)
+            Button:
+                size_hint_y: None
+                height: 40
+                text: "Fechar"
+                on_release:
+                    root.dismiss() # Para fechar a jaela popup
