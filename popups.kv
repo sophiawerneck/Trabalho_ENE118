@@ -15,7 +15,7 @@
                 fonte_size: 14
             TextInput: 
                 id: txt_ip
-                text: "???"
+                text: "127.0.0.1"
                 fonte_size: 14
                 haling: 'center'
                 valing: 'middle'
@@ -66,7 +66,10 @@
             Button:
                 size_hint_y: None
                 height: 40
-                text: "Configurar"
+                text: "Configurar" #modficar o atributo scan_time da calsse MyWidget
+                on_release:
+                    app.root._scan_time = int(txt_st.text)
+                    print(app.root._scan_time)
             Button: 
                 size_hint_y: None
                 height: 40
