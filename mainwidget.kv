@@ -1,40 +1,42 @@
-#:kivy 2.3.0
+#:kivy 1.11.1
 
 <MainWidget>:
     orientation: 'vertical'
     canvas:
         Color:
-            rgb: 0.5,0.5,0.5
+            rgb: 0.5,0.5,0.5 
         Rectangle:
             size: self.size
     BoxLayout:
-        orientation:'horizontal'
-        size_hint: (1,0.1)
+        orientation: 'horizontal'
+        size_hint:(1,0.1)
         spacing: 10
         Label:
-            text: 'SUPERVISÓRIO ESTEIRA v1.0'
-            size_hint_x: None #Desabilitar o posicionamento horizontal
+            text: 'Supervisório Esteira v1.0'
+            size_hint_x :None
             width: 300
+
         BoxLayout:
-            orientation: 'vertical'
-            size_hint_x: None 
+            orientation:'vertical'
+            size_hint_x:None
             width: 400
             Label:
                 text: 'Configurações'
             BoxLayout:
                 orientation: 'horizontal'
                 Button:
-                    text: 'MODBUS'
+                    text: 'Conexão'
                     on_release: root._modbusPopup.open()
                 Button:
-                    text: 'Scan Time'
-                    on_release: root._scanPopup.open()
+                    text: 'Scantime'   
+                    on_release: root._scanPopup.open()          
         Image:
-            id: img_con
-            size_hint_x: None
-            width: 80
-            source: 'imgs/vermelho.png'
+            id:img_con
+            size_hint_x: 0.05
+            width: 70
+            source: 'imgs/desconectado.png'
             pos_hint: {'top':1, 'right':1}
+
     FloatLayout:
         canvas:
             Color:
@@ -42,4 +44,106 @@
             Rectangle:
                 size: self.size
         Image:
+            id: imgEsteira                                                          
             source: 'imgs/esteira.png'
+        Label:
+            id: indicaPartida
+            text: '-.-'
+            font_size: 20
+            bold: True
+            halign: 'center'
+            pos_hint: {'x':-0.43, 'y':0.02}
+            color: 0,0,0,1       
+        Label:
+            id: freqRotacao
+            text: '-.- RPM'
+            font_size: 20
+            bold: True
+            halign: 'center'
+            pos_hint: {'x':-0.43, 'y':-0.03}
+            color: 0,0,0,1
+        Label:
+            id: torque
+            text: '-.- N.m'
+            font_size: 20
+            bold: True
+            halign: 'center'
+            pos_hint: {'x':-0.43, 'y':-0.08}
+            color: 0,0,0,1
+        Label:
+            id: tempCarc
+            text: '-.- °C'
+            font_size: 20
+            bold: True
+            halign: 'center'
+            pos_hint: {'x':-0.43, 'y':-0.13}
+            color: 0,0,0,1
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: (0.1,0.1)
+            background_color: 0,0,0,0
+            pos_hint: {'x':0.855, 'y':0.75}
+            Label:
+                text: 'Carga na Esteira'
+                font_size: 20
+                bold: True
+                halign: 'center'
+                color: 0,0,0,1
+            Label:
+                id: cargaPV
+                text: '-.- Kgf/cm²'
+                font_size: 20
+                bold: True
+                halign: 'center'
+                color: 0,0,0,1
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: (0.1,0.1)
+            pos_hint: {'x':0.855, 'y':0.65}
+            Label:
+                text: 'Vel. da Esteira'
+                font_size: 20
+                bold: True
+                halign: 'center'
+                color: 0,0,0,1
+            Label:
+                id: velEsteira
+                text: '-.- m/min'
+                font_size: 20
+                bold: True
+                halign: 'center'
+                color: 0,0,0,1
+
+        Button:
+            size_hint:(None, None)
+            size: (0.8*62, 0.8*58)   # a imagem tem 62x58 pixels
+            background_normal: 'imgs/graph_icon.jpg'
+            background_down: 'imgs/graph_icon.jpg'
+            pos_hint: {'x':0.002, 'y': 0.002}
+            
+        Button:
+            text :'Medições'
+            pos_hint:{'x':0.70, 'y':0.25}
+            size_hint:(0.2,0.075)
+            padding: 10,10
+            
+        Button:
+            text: 'PID'
+            pos_hint:{'x':0.70, 'y':0.15}
+            size_hint:(0.2,0.075)
+            padding: 10,10
+            
+        Button:
+            text: 'Banco de Dados'
+            pos_hint:{'x':0.70, 'y':0.05}
+            size_hint:(0.2,0.075)
+            padding: 10,10
+            
+        Button:
+            id: btnComando
+            text: 'Comando do Motor'
+            pos_hint:{'x':0.05, 'y':0.57}
+            size_hint:(0.2,0.075)
+            padding: 10,10
+            
