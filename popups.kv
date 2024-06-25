@@ -79,3 +79,202 @@
                 text: "Fechar"
                 on_release:
                     root.dismiss() 
+
+<MedicoesPopup>:
+    title:"Medições de variáveis elétricas"
+    size_hint_y: None
+    size_hint_x: 0.8
+    height: 500
+    BoxLayout:
+        orientation: "vertical"
+        GridLayout:
+            cols: 2
+            rows: 14
+                
+            Label:
+                text: "Frequência da rede"
+                font_size: 14
+            Label:
+                id: frequencia
+                text: '-.- Hz'
+                font_size: 14
+                haligh: "center"
+                valign: "middle"
+                  
+            Label:
+                text: "Demanda atual"
+                font_size: 14
+            Label:
+                id: demanda_atual
+                text: '-.- W'
+                font_size: 14
+                haligh: "center"
+                valign: "middle"
+            
+            Label:
+                text: "Demanda prevista"
+                font_size: 14
+            Label:
+                id: demanda_prevista
+                text: '-.- W'
+                font_size: 14
+                haligh: "center"
+                valign: "middle"
+
+            Label:
+                text: "Demanda média"
+                font_size: 14
+            Label:
+                id: demanda_media
+                text: '-.- W'
+                font_size: 14
+                haligh: "center"
+                valign: "middle"
+            
+            Label:
+                text: "Demanda anterior"
+                font_size: 14
+            Label:
+                id: demanda_anterior
+                text: '-.- W'
+                font_size: 14
+                haligh: "center"
+                valign: "middle"
+
+            Label:
+                text: "Energia ativa"
+                font_size: 14
+            Label:
+                id: energia_ativa
+                text: '-.-'
+                font_size: 14
+                haligh: "center"
+                valign: "middle"    
+
+            Label:
+                text: "Potência ativa total"
+                font_size: 14
+            Label:
+                id: ativa_total
+                text: '-.- W'
+                font_size: 14
+                haligh: "center"
+                valign: "middle" 
+
+            Label:
+                text: "Potência reativa total"
+                font_size: 14
+            Label:
+                id: reativa_total
+                text: '-.- W'
+                font_size: 14
+                haligh: "center"
+                valign: "middle"  
+
+            Label:
+                text: "Potência aparente total"
+                font_size: 14
+            Label:
+                id: aparente_total
+                text: '-.- W'
+                font_size: 14
+                haligh: "center"
+                valign: "middle"   
+            
+            Label:
+                text: "Fator de Potência Total"
+                font_size: 14
+            Label:
+                id: fp_total
+                text: '-.-'
+                font_size: 14
+                haligh: "center"
+                valign: "middle"
+            
+            Label:
+                text: "Tensão entre R e S"
+                font_size: 14
+            Label:
+                id: tensao_rs
+                text: '-.- V'
+                font_size: 14
+                haligh: "center"
+                valign: "middle"
+
+            Label:
+                text: "Tensão entre S e T"
+                font_size: 14
+            Label:
+                id: tensao_st
+                text: '-.- V'
+                font_size: 14
+                haligh: "center"
+                valign: "middle"
+            
+            Label:
+                text: "Tensão entre T e R"
+                font_size: 14
+            Label:
+                id: tensao_tr
+                text: '-.- V'
+                font_size: 14
+                haligh: "center"
+                valign: "middle"
+
+            Label:
+                text: "Corrente Média"
+                font_size: 14
+            Label:
+                id: corrente_media
+                text: '-.- A'
+                font_size: 14
+                haligh: "center"
+                valign: "middle"
+
+<ComandoPopup>:
+    title:"Comandos do motor"
+    size_hint_y: None
+    size_hint_x: 0.8
+    height: 500
+    GridLayout:
+        cols:3
+        BoxLayout:
+            orientation: "vertical"
+            size_hint_x: 0.4
+            Label:
+                text: "Comando da esteira"
+                font_size: 14
+            Button:                        
+                text: "Ligar"
+                height: 100             
+            Button:
+                text: "Desligar"
+                height: 100
+ 
+            Button:
+                text: "Reset"
+                height: 100
+        Widget:
+            size_hint_x: 0.05
+        BoxLayout:
+            orientation: "vertical"
+            size_hint_x: 0.4
+            Label:
+                text: "Tipo de partida"
+                font_size: 14
+            Button:                        
+                text: "Direta"
+                height: 100             
+            Button:
+                text: "Inversor"
+                height: 100
+ 
+            Button:
+                text: "Soft-start"
+                height: 100
+
+            
+            
+
+              
+

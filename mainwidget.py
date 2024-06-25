@@ -1,5 +1,5 @@
 from kivy.uix.boxlayout import BoxLayout
-from popups import ModbusPopup,ScanPopup
+from popups import ModbusPopup,ScanPopup,MedicoesPopup,ComandoPopup
 from pyModbusTCP.client import ModbusClient
 from time import sleep
 from kivy.core.window import Window
@@ -26,6 +26,8 @@ class MainWidget(BoxLayout):
         self._serverPort = kwargs.get('server_port')
         self._modbusPopup = ModbusPopup(self._serverIP, self._serverPort)
         self._scanPopup = ScanPopup(scantime=self._scan_time)
+        self._medicoesPopup = MedicoesPopup()
+        self._comandoPopup = ComandoPopup()
         self._modbusClient = ModbusClient(host = self._serverIP, port = self._serverPort)
         self._meas = {}
         self._meas['timestamp'] = None

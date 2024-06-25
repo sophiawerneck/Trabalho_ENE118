@@ -127,13 +127,14 @@
             pos_hint:{'x':0.70, 'y':0.25}
             size_hint:(0.2,0.075)
             padding: 10,10
+            on_release: root._medicoesPopup.open() 
             
         Button:
             text: 'PID'
             pos_hint:{'x':0.70, 'y':0.15}
             size_hint:(0.2,0.075)
             padding: 10,10
-            
+
         Button:
             text: 'Banco de Dados'
             pos_hint:{'x':0.70, 'y':0.05}
@@ -146,5 +147,6 @@
             pos_hint:{'x':0.05, 'y':0.57}
             size_hint:(0.2,0.075)
             padding: 10,10
+            on_release: root._comandoPopup.open() 
             
         
