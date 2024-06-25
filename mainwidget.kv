@@ -1,4 +1,4 @@
-#:kivy 1.11.1
+#:kivy 2.3.0
 
 <MainWidget>:
     orientation: 'vertical'
@@ -47,7 +47,7 @@
             id: imgEsteira                                                          
             source: 'imgs/esteira.png'
         Label:
-            id: indicaPartida
+            id: es.indica_driver
             text: '-.-'
             font_size: 20
             bold: True
@@ -55,7 +55,7 @@
             pos_hint: {'x':-0.43, 'y':0.02}
             color: 0,0,0,1       
         Label:
-            id: freqRotacao
+            id: es.encoder
             text: '-.- RPM'
             font_size: 20
             bold: True
@@ -63,7 +63,7 @@
             pos_hint: {'x':-0.43, 'y':-0.03}
             color: 0,0,0,1
         Label:
-            id: torque
+            id: es.torque
             text: '-.- N.m'
             font_size: 20
             bold: True
@@ -71,7 +71,7 @@
             pos_hint: {'x':-0.43, 'y':-0.08}
             color: 0,0,0,1
         Label:
-            id: tempCarc
+            id: es.temp_carc
             text: '-.- °C'
             font_size: 20
             bold: True
@@ -91,7 +91,7 @@
                 halign: 'center'
                 color: 0,0,0,1
             Label:
-                id: cargaPV
+                id: es.le_carga
                 text: '-.- Kgf/cm²'
                 font_size: 20
                 bold: True
@@ -108,7 +108,7 @@
                 halign: 'center'
                 color: 0,0,0,1
             Label:
-                id: velEsteira
+                id: es.esteira
                 text: '-.- m/min'
                 font_size: 20
                 bold: True
@@ -147,3 +147,4 @@
             size_hint:(0.2,0.075)
             padding: 10,10
             
+        

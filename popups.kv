@@ -1,4 +1,5 @@
-#kivy 1.11.1
+#:kivy 2.3.0
+
 <ModbusPopup>:
     title: "Configurações MODBUS"
     size_hint_y: None
@@ -23,7 +24,7 @@
                 text: "Porta"
                 fonte_size: 14
             TextInput: 
-                id: txt_porta
+                id: txt_port
                 text: "502"
                 fonte_size: 14
                 haling: 'center'
@@ -34,14 +35,16 @@
                 size_hint_y: None
                 height: 40
                 text: "Conectar"
-
+                on_release:
+                    root.clearInfo()
+                    app.root.startDataRead(txt_ip.text, int(txt_port.text))
             Button: 
                 size_hint_y: None
                 height: 40
                 text: "Fechar"
                 on_release:
                     root.dismiss() 
-
+                    root.clearInfo()
 <ScanPopup>:
     title: "Configurações ScanTime"
     size_hint_y: None
@@ -66,7 +69,7 @@
             Button:
                 size_hint_y: None
                 height: 40
-                text: "Configurar" #modficar o atributo scan_time da calsse MyWidget
+                text: "Configurar" #modficar o atributo scan_time da classe MyWidget
                 on_release:
                     app.root._scan_time = int(txt_st.text)
                     print(app.root._scan_time)
