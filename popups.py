@@ -42,14 +42,23 @@ class MedicoesPopup(Popup):
         Construtor da classe MedicoesPopup
         """
         super().__init__(**kwargs)
-    '''
-       def update(self, medida):
+   
+    def update(self, medida):
         """
         Método para atualizar os valores das medições
         """
-   '''
+        #ARRUMAR O NOSSO
+        self.ids['encoder'].text=str(self._meas['values']['encoder'])+' RPM'
+   
 
 class ComandoPopup(Popup):
+     def __init__(self,**kwargs):
+        """
+        Construtor da classe ComandoPopup
+        """
+        super().__init__(**kwargs)
+
+class PidPopup(Popup):
      def __init__(self,**kwargs):
         """
         Construtor da classe ComandoPopup

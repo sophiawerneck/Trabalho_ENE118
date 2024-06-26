@@ -1,5 +1,5 @@
 from kivy.uix.boxlayout import BoxLayout
-from popups import ModbusPopup,ScanPopup, ComandoPopup, MedicoesPopup
+from popups import ModbusPopup,ScanPopup, ComandoPopup, MedicoesPopup, PidPopup
 from pyModbusTCP.client import ModbusClient
 from kivy.core.window import Window
 from threading import Thread
@@ -30,8 +30,9 @@ class MainWidget(BoxLayout):
         self._scanPopup = ScanPopup(scantime=self._scan_time)
         self._medicoesPopup = MedicoesPopup()
         self._comandoPopup = ComandoPopup()
+        self._pidPopup = PidPopup()
         self._modbusClient = ModbusClient(host = self._serverIP, port = self._serverPort)
-        self._meas = {}
+        self._meas = {} #armazenar as tags
         self._meas['timestamp'] = None
         self._meas['values'] = {} # Valores das tags do sistema
         
@@ -58,10 +59,10 @@ class MainWidget(BoxLayout):
             Window.set_system_cursor("wait")
             self._modbusClient.open()
             Window.set_system_cursor("arrow")
-            if callable(self._modbusClient.is_open) and self._modbusClient.is_open(): # se o cliente estiver conectado eu começo uma nova thread
+            if self._modbusClient.is_open: # se o cliente estiver conectado eu começo uma nova thread
                 self._updateThread = Thread(target=self.updater) #thread secundaria para atualização da interface grafica (para leitura de dados e atualização do BD) (updater)
                 self._updateThread.start()
-                self.ids.img_con.sorce = 'imgs/conectado.png'
+                self.ids.img_con.source = 'imgs/conectado.png'
                 self._modbusPopup.dismiss()
             else: 
                 self._modbusPopup.setInfo("Falha na conexão com o servidor") 
@@ -104,6 +105,15 @@ class MainWidget(BoxLayout):
                     return (self._modbusClient.read_holding_registers(value['addr'],1)[0])/value['div']
                 elif value['tipo']=='FP':
                     return (self.lerFloat(value['addr']))/value['div']
+                
+    def writeData(self,addr,tipo,div,value):
+        """
+        Método para a escrita de dados por meio do protocolo MODBUS
+        """
+        if tipo=='4X':
+            self._modbusClient.write_single_register(addr,int(value*div))
+        elif tipo=='FP':
+            print(self.escreveFloat(addr,float(value*div)))
 
 
     def lerFloat(self,addr):
@@ -111,18 +121,17 @@ class MainWidget(BoxLayout):
         Método para a leitura de um "float" na tabela MODBUS
         """
         result = self._modbusClient.read_holding_registers(addr,2)
-        decoder = BinaryPayloadDecoder.fromRegisters(result, byteorder=Endian.Big, wordorder=Endian.Little)
+        decoder = BinaryPayloadDecoder.fromRegisters(result, byteorder=Endian.BIG, wordorder=Endian.LITTLE)
         decoded = decoder.decode_32bit_float()
         return decoded
     def escreveFloat(self,addr,data):
         """
         Método para a escrita de um "float" na tabela MODBUS
         """
-        builder = BinaryPayloadBuilder(byteorder=Endian.Big, wordorder=Endian.Little)
+        builder = BinaryPayloadBuilder(byteorder=Endian.BIG, wordorder=Endian.LITTLE)
         builder.add_32bit_float(data)
         payload = builder.to_registers()
         return self._modbusClient.write_multiple_registers(addr,payload)
-
 
 
     def updateGUI(self):
@@ -142,3 +151,6 @@ class MainWidget(BoxLayout):
         self.ids['temp_carc'].text=str(self._meas['values']['temp_carc'])+' °C'
         self.ids['le_carga'].text=str(round(self._meas['values']['le_carga'],2))+' kgf/cm²' #round: arredondar o valor pra 2 casas decimais 
         self.ids['esteira'].text=str(round(self._meas['values']['esteira'],2))+' m/min'
+
+    def stopRefresh(self):
+        self._updateThread = False

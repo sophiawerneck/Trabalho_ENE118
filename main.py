@@ -247,10 +247,40 @@ class MainApp(App):
                 'tipo':'4X',
                 'div':10.0
             },
+            'atv31_acc':{
+                'addr':1314,
+                #Define a rampa de aceleração do inversor (10s a 60s)
+                'tipo':'4X',
+                'div':10.0
+            },
+            'atv31_dcc':{
+                'addr':1315,
+                #Define a rampa de desaceleração do inversor (10s a 60s)
+                'tipo':'4X',
+                'div':10.0
+            },
+            'ats48_acc':{
+                'addr':1317,
+                #Define a rampa de aceleração do soft-start (10s a 60s)
+                'tipo':'4X',
+                'div':1.0
+            },
+            'ats48_dcc':{
+               'addr':1318,
+                #Define a rampa de desaceleração do soft-start (10s a 60s)
+                'tipo':'4X',
+                'div':1.0
+            },
             'carga':{
                 'addr':1302,
                 #Define a Carga na esteira no PID (SP- Set Point)
                 'tipo':'FP',
+                'div':1.0
+            },
+            'sel_pid':{
+                'addr':1332,
+                #Seleciona o tipo de PID (Automático = 0, Manual = 1)
+                'tipo':'4X',
                 'div':1.0
             },
             'p':{
@@ -270,17 +300,18 @@ class MainApp(App):
                 #Define o valor do Controle Derivativo
                 'tipo':'FP',
                 'div':1.0
-            }
+            },
+            
 
         }
         )
         return self._widget
     
-    # def on_stop(self):
-    #     """
-    #     Método chamado quando o programa é fechado
-    #     """
-    #     self._widget.stopRefresh()
+    def on_stop(self): #finalizar a thread secundaria
+        """
+        Método chamado quando o programa é fechado
+        """
+        self._widget.stopRefresh()
     
 if __name__ == '__main__':
     Builder.load_string(open("mainwidget.kv",encoding="utf-8").read(),rulesonly=True)
