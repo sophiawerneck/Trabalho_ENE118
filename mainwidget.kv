@@ -1,4 +1,4 @@
-#:kivy 2.3.0
+#:kivy 1.11.1
 
 <MainWidget>:
     orientation: 'vertical'
@@ -47,7 +47,7 @@
             id: imgEsteira                                                          
             source: 'imgs/esteira.png'
         Label:
-            id: es.indica_driver
+            id: indica_driver
             text: '-.-'
             font_size: 20
             bold: True
@@ -55,7 +55,7 @@
             pos_hint: {'x':-0.43, 'y':0.02}
             color: 0,0,0,1       
         Label:
-            id: es.encoder
+            id: encoder
             text: '-.- RPM'
             font_size: 20
             bold: True
@@ -63,7 +63,7 @@
             pos_hint: {'x':-0.43, 'y':-0.03}
             color: 0,0,0,1
         Label:
-            id: es.torque
+            id: torque
             text: '-.- N.m'
             font_size: 20
             bold: True
@@ -71,7 +71,7 @@
             pos_hint: {'x':-0.43, 'y':-0.08}
             color: 0,0,0,1
         Label:
-            id: es.temp_carc
+            id: temp_carc
             text: '-.- °C'
             font_size: 20
             bold: True
@@ -91,7 +91,7 @@
                 halign: 'center'
                 color: 0,0,0,1
             Label:
-                id: es.le_carga
+                id: le_carga
                 text: '-.- Kgf/cm²'
                 font_size: 20
                 bold: True
@@ -108,7 +108,7 @@
                 halign: 'center'
                 color: 0,0,0,1
             Label:
-                id: es.esteira
+                id: esteira
                 text: '-.- m/min'
                 font_size: 20
                 bold: True
@@ -127,14 +127,14 @@
             pos_hint:{'x':0.70, 'y':0.25}
             size_hint:(0.2,0.075)
             padding: 10,10
-            on_release: root._medicoesPopup.open() 
+            on_release: root._medicoesPopup.open()
             
         Button:
             text: 'PID'
             pos_hint:{'x':0.70, 'y':0.15}
             size_hint:(0.2,0.075)
             padding: 10,10
-
+            
         Button:
             text: 'Banco de Dados'
             pos_hint:{'x':0.70, 'y':0.05}
@@ -147,6 +147,5 @@
             pos_hint:{'x':0.05, 'y':0.57}
             size_hint:(0.2,0.075)
             padding: 10,10
-            on_release: root._comandoPopup.open() 
+            on_release: root._comandoPopup.open()
             
-        

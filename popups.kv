@@ -1,5 +1,4 @@
-#:kivy 2.3.0
-
+#kivy 1.11.1
 <ModbusPopup>:
     title: "Configurações MODBUS"
     size_hint_y: None
@@ -24,11 +23,11 @@
                 text: "Porta"
                 fonte_size: 14
             TextInput: 
-                id: txt_port
+                id: txt_porta
                 text: "502"
                 fonte_size: 14
                 haling: 'center'
-                valing: 'middle'
+                valing: 'middle'                
         BoxLayout:
             orientation:'horizontal'
             Button: 
@@ -37,7 +36,7 @@
                 text: "Conectar"
                 on_release:
                     root.clearInfo()
-                    app.root.startDataRead(txt_ip.text, int(txt_port.text))
+                    app.root.startDataRead(txt_ip.text, int(txt_porta.text))
             Button: 
                 size_hint_y: None
                 height: 40
@@ -45,6 +44,7 @@
                 on_release:
                     root.dismiss() 
                     root.clearInfo()
+
 <ScanPopup>:
     title: "Configurações ScanTime"
     size_hint_y: None
@@ -69,7 +69,7 @@
             Button:
                 size_hint_y: None
                 height: 40
-                text: "Configurar" #modficar o atributo scan_time da classe MyWidget
+                text: "Configurar" #modficar o atributo scan_time da calsse MyWidget
                 on_release:
                     app.root._scan_time = int(txt_st.text)
                     print(app.root._scan_time)
@@ -272,9 +272,3 @@
             Button:
                 text: "Soft-start"
                 height: 100
-
-            
-            
-
-              
-
