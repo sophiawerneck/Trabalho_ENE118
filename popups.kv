@@ -272,3 +272,96 @@
             Button:
                 text: "Soft-start"
                 height: 100
+
+<PidPopup>:
+    title:"PID"
+    size_hint_y: None
+    size_hint_x: 0.8
+    height: 500
+    GridLayout:
+        cols:2
+        rows:4
+        Button:                  
+            text: "Automático"
+            height: 100   
+            on_release: root.automatico()
+        Button:
+            text: "Manual"
+            height: 100 
+            on_release: root.manual() 
+        GridLayout:
+            cols:2
+            rows:4
+            Label:
+                text: "P"
+                font_size: 14
+            Label:
+                id: txt_pautom
+                font_size: 14
+                text: '-'
+                halign: 'center'
+                valign: 'middle'
+            Label:
+                text: "I"
+                font_size: 14
+            Label:
+                id: txt_iautom
+                font_size: 14
+                halign: 'center'
+                text: '-'
+                valign: 'middle'
+            Label:
+                text: "D"
+                font_size: 14
+            Label:
+                id: txt_dautom
+                font_size: 14
+                halign: 'center'
+                text: '-'
+                valign: 'middle'
+            Label:
+                text: "SP"
+                font_size: 14
+            Label:
+                id: txt_spautom
+                font_size: 14
+                text: '-'
+                haling: 'center'
+                valing: 'middle'
+
+        GridLayout:
+            cols:2
+            rows:4
+            Label:
+                text: "P"
+                font_size: 14
+            TextInput:
+                id: txt_pmanual
+                font_size: 14
+                halign: 'center'
+                valign: 'middle'
+            Label:
+                text: "I"
+                font_size: 14
+            TextInput:
+                id: txt_imanual
+                font_size: 14
+                halign: 'center'
+                valign: 'middle'
+            Label:
+                text: "D"
+                font_size: 14
+            TextInput:
+                id: txt_dmanual
+                font_size: 14
+                halign: 'center'
+                valing: 'middle'
+            Label:
+                text: "SP"
+                font_size: 14
+            TextInput:
+                id: txt_spmanual
+                font_size: 14
+                halign: 'center'
+                valign: 'middle'
+
