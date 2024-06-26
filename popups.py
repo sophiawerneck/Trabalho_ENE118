@@ -58,9 +58,20 @@ class ComandoPopup(Popup):
         """
         super().__init__(**kwargs)
 
+
 class PidPopup(Popup):
-     def __init__(self,**kwargs):
+    def __init__(self,**kwargs):
         """
-        Construtor da classe ComandoPopup
+        Construtor da classe PidPopup
         """
         super().__init__(**kwargs)
+        self._MV=0.0
+        self._P=5.0
+        self._I=5.0
+        self._D=5.0
+    def atualiza(self, medida):
+        pass
+    def automatico(self):
+        pass
+    def manual(self):
+        pass
