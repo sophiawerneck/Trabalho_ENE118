@@ -219,7 +219,7 @@ class MainApp(App):
         atuadores = {
             'sel_driver':{
                 'addr':1324,
-                #Seleção do tipo de partida(3=direta, 1=soft start, 2=inversor)
+                #Seleção do tipo de partida(1=soft start, 2=inversor, 3=direta)
                 'tipo':'4X',
                 'div':1.0
             },

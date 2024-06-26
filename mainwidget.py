@@ -129,7 +129,16 @@ class MainWidget(BoxLayout):
         """
         Método para atualização da interface gráfica a partir dos dados lidos
         """
-        # ADAPTAR PARA O NOSSO
-        # Atualização dos labels das temperaturas
-        for key,value in self._tag.items(): 
-            self.ids[key].text = str(self._meas['value'][key]) + '°C' # Atualiza cada label utilizando os valores lidos
+        # ADAPTAR PARA O NOSSO: AINDA FALTA ATUALIZAR OS POPUPS
+        partida=self._meas['values']['indica_driver'] #armazena o valor selecionado do tipo de partida
+        if partida == 1:
+            self.ids['indica_driver'].text='Soft-Start'
+        if partida == 2:
+            self.ids['indica_driver'].text='Inversor'
+        if partida == 3:
+            self.ids['indica_driver'].text='Direta'
+        self.ids['encoder'].text=str(self._meas['values']['encoder'])+' RPM'
+        self.ids['torque'].text=str(self._meas['values']['torque'])+' N.m'
+        self.ids['temp_carc'].text=str(self._meas['values']['temp_carc'])+' °C'
+        self.ids['le_carga'].text=str(round(self._meas['values']['le_carga'],2))+' kgf/cm²' #round: arredondar o valor pra 2 casas decimais 
+        self.ids['esteira'].text=str(round(self._meas['values']['esteira'],2))+' m/min'
