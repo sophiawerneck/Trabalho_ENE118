@@ -134,7 +134,8 @@
             pos_hint:{'x':0.70, 'y':0.15}
             size_hint:(0.2,0.075)
             padding: 10,10
-            
+            on_release: root._pidPopup.open()
+
         Button:
             text: 'Banco de Dados'
             pos_hint:{'x':0.70, 'y':0.05}
