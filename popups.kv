@@ -240,7 +240,7 @@
         cols:3
         BoxLayout:
             orientation: "vertical"
-            size_hint_x: 0.4
+            size_hint_x: 0.3
             Label:
                 text: "Comando da esteira"
                 font_size: 14
@@ -256,12 +256,10 @@
                 text: "Reset"
                 height: 100
                 on_release: root.setOperacao(2)
-
-        Widget:
-            size_hint_x: 0.05
+        
         BoxLayout:
             orientation: "vertical"
-            size_hint_x: 0.4
+            size_hint_x: 0.3
             Label:
                 text: "Tipo de partida"
                 font_size: 14
@@ -277,6 +275,77 @@
                 text: "Soft-start"
                 height: 100
                 on_release: root.setPartida('Soft-start')
+        
+        BoxLayout:
+            orientation: "vertical"
+            size_hint_x: 0.4  
+            Label:
+                text: "Comandos do inversor/ soft-start"
+                font_size: 14
+                size_hint_y: 0.33
+            BoxLayout:
+                orientation: "horizontal"
+                BoxLayout:
+                    orientation: "vertical"
+                    GridLayout:
+                        cols:2
+                        rows:2
+                        Label:
+                            text: "Acel.(s)"
+                        TextInput:
+                            id: atv31_acc #usamos o id relacionado a tag do oinversor mas esse campo tb é válido para o soft-start
+                            font_size: 14
+                            text: "10"
+                            haligh: "center"
+                            valign: "middle"
+                            on_text_validate: root.setAcel() #evento que ocorre quando o usuário pressiona a tecla Enter
+                            multiline: False
+                        Label:
+                            text: "Desacel.(s)"
+                        TextInput:
+                            id: atv31_dcc
+                            font_size: 14
+                            text: "10"
+                            haligh: "center"
+                            valign: "middle"
+                            on_text_validate: root.setDesacel()
+                            multiline: False
+                    BoxLayout:
+                        orientation: "vertical"
+                        Label:
+                            text:"Aceleração e"
+                            bold: True
+                        Label:
+                            text:"desaceleração"
+                            bold: True
+                        Label:
+                            haligh: "center"
+                            text:"      Min: 10s Max: 60s"        
+                    BoxLayout:
+                        orientation: "vertical"
+                        Label:
+                            text:"Velocidade(0 a 60Hz)-INV"
+                            bold: True
+                        TextInput:
+                            id: atv31_velocidade
+                            font_size: 14
+                            text: "50"
+                            haligh: "center"
+                            valign: "middle"
+                            on_text_validate: root.setVelInv()
+                            multiline: False
+                Slider:
+                    id: slider_vel
+                    min: 0
+                    max: 60
+                    value: 0
+                    step: 1
+                    on_touch_move:
+                        root.setVelSlider(self.value)
+                    orientation: 'vertical'
+                    size_hint: (None, 1)
+                    width: 100
+            
 
 <PidPopup>:
     title:"Configuração PID esteira"
