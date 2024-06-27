@@ -41,34 +41,77 @@ class MedicoesPopup(Popup):
         """
         Construtor da classe MedicoesPopup
         """
-        super().__init__(**kwargs)
-   
+        super().__init__(**kwargs)   
     def update(self, medida):
         """
         Método para atualizar os valores das medições
         """
-        #ARRUMAR O NOSSO
-        self.ids['encoder'].text=str(self._meas['values']['encoder'])+' RPM'
-   
+        #ARRUMAR O NOSSO: AINDA TA FALTANDO 11
+        self.ids.frequencia.text = str(medida['values']['frequencia'])
+        self.ids.demanda_atual.text = str(medida['values']['demanda_atual'])
+        self.ids.demanda_prevista.text = str(medida['values']['demanda_prevista'])
+        self.ids.demanda_media.text = str(medida['values']['demanda_media'])
+        self.ids.demanda_anterior.text = str(medida['values']['demanda_anterior'])
+        self.ids.energia_ativa.text = str(medida['values']['energia_ativa'])
+        self.ids.ativa_total.text = str(medida['values']['ativa_total'])
+        self.ids.reativa_total.text = str(medida['values']['reativa_total'])
+        self.ids.aparente_total.text = str(medida['values']['aparente_total'])
+        self.ids.fp_total.text = str(medida['values']['fp_total'])
+        self.ids.tensao_rs.text = str(medida['values']['tensao_rs'])
+        self.ids.tensao_st.text = str(medida['values']['tensao_st'])
+        self.ids.tensao_tr.text = str(medida['values']['tensao_tr'])
+        self.ids.corrente_media.text = str(medida['values']['corrente_media'])    
+
 
 class ComandoPopup(Popup):
-     def __init__(self,**kwargs):
+    """
+    Popup para configurar os comandos do motor
+    """
+    _partida=None
+    _operacao=None
+    def __init__(self,**kwargs):
         """
         Construtor da classe ComandoPopup
         """
         super().__init__(**kwargs)
+        self._partida= 'Inversor' #Partida padrão como inversor
+        self._operacao= 0 #Operação padrão como parado
+
+    def setPartida(self,partida):
+        self._partida=partida
+    def setOperacao(self,operacao):
+        self._operacao=operacao
+
+    def update(self,medida):
+        medida['values']['tesys']=None #operação da partida direta
+        medida['values']['ats48']=None #operação do soft-start
+        medida['values']['atv31']=None #operação do inversor
+
+        if self._partida is not None:
+            if self._partida== 'Direta':
+                medida['values']['tesys']=self._operacao
+                medida['values']['sel_driver']=3 #indica a partida
+
+            elif self._partida == 'Soft-Start':
+                medida['values']['ats48']=self._operacao
+                medida['values']['sel_driver']=1
+
+            elif self._partida == 'Inversor':
+                medida['values']['atv31']=self._operacao
+                medida['values']['sel_driver']=2
 
 
 class PidPopup(Popup):
     def __init__(self,**kwargs):
         """
-        Construtor da classe PidPopup
+        Construtor da classe ComandoPopup
         """
         super().__init__(**kwargs)
         self._MV=0.0
         self._P=5.0
         self._I=5.0
         self._D=5.0
+
     def atualiza(self, medida):
         pass
     def automatico(self):

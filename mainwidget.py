@@ -152,5 +152,8 @@ class MainWidget(BoxLayout):
         self.ids['le_carga'].text=str(round(self._meas['values']['le_carga'],2))+' kgf/cm²' #round: arredondar o valor pra 2 casas decimais 
         self.ids['esteira'].text=str(round(self._meas['values']['esteira'],2))+' m/min'
 
+        self._medicoesPopup.update(self._meas)
+        self._comandoPopup.update(self._meas)
+
     def stopRefresh(self):
         self._updateThread = False
