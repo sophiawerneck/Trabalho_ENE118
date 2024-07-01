@@ -9,6 +9,7 @@ import random
 from pymodbus.payload import BinaryPayloadDecoder
 from pymodbus.payload import BinaryPayloadBuilder
 from pymodbus.constants import Endian
+from threading import Lock
 
 class MainWidget(BoxLayout):
     """
@@ -35,6 +36,7 @@ class MainWidget(BoxLayout):
         self._meas = {} #armazenar as tags
         self._meas['timestamp'] = None
         self._meas['values'] = {} # Valores das tags do sistema
+        self._lock=Lock()
         
         # Leitura das tags (readData vai iterar o dicionario)
         for key,value in kwargs.get('modbus_addrs').items():
@@ -79,60 +81,140 @@ class MainWidget(BoxLayout):
                 self.readData() #ler os dados MODBUS
                 self.updateGUI() #atualizar a interface
                 #inserir os dados no BD
-                sleep(self._scantime/1000)     
+                sleep(self._scan_time/1000)     
         except Exception as e:
             self._modbusClient.close()
             print("Erro: ", e.args)
 
 
-    def readData(self):
+    def readData(self, esp_addr):
         """
         Método para a leitura dos dados por meio do protocolo MODBUS
         """ 
+        self._lock.acquire()
         self._meas['timestamp'] = datetime.now() # now retorna o horário corrente do sistema operacional
         for key,value in self._tags['modbusaddrs'].items():
+            if esp_addr is not None and value['addr'] != esp_addr:
+                continue
+
             if value['tipo']=='4X': #Holding Register 16bits
                 self._meas['values'][key]=(self._modbusClient.read_holding_registers(value['addr'],1)[0])/value['div']      
             elif value['tipo']=='FP': #Floating Point
                 self._meas['values'][key]=(self.lerFloat(value['addr']))/value['div']
+        self._lock.release()    
     def readDataAtuadores(self,chave):
         """
         Método para leitura dos dados dos atuadores
-        """ 
+        """
+        self._lock.acquire() 
         for key,value in self._tags['atuadores'].items():
             if key==chave:
                 if value['tipo']=='4X':
                     return (self._modbusClient.read_holding_registers(value['addr'],1)[0])/value['div']
                 elif value['tipo']=='FP':
                     return (self.lerFloat(value['addr']))/value['div']
-                
+        self._lock.release()
+
     def writeData(self,addr,tipo,div,value):
         """
         Método para a escrita de dados por meio do protocolo MODBUS
         """
+        self._lock.acquire()
         if tipo=='4X':
             self._modbusClient.write_single_register(addr,int(value*div))
         elif tipo=='FP':
             print(self.escreveFloat(addr,float(value*div)))
-
+        self._lock.release()
 
     def lerFloat(self,addr):
         """
         Método para a leitura de um "float" na tabela MODBUS
         """
+        self._lock.acquire()
         result = self._modbusClient.read_holding_registers(addr,2)
         decoder = BinaryPayloadDecoder.fromRegisters(result, byteorder=Endian.BIG, wordorder=Endian.LITTLE)
         decoded = decoder.decode_32bit_float()
+        self._lock.release()
         return decoded
     def escreveFloat(self,addr,data):
         """
         Método para a escrita de um "float" na tabela MODBUS
         """
+        self._lock.acquire()
         builder = BinaryPayloadBuilder(byteorder=Endian.BIG, wordorder=Endian.LITTLE)
         builder.add_32bit_float(data)
         payload = builder.to_registers()
+        self._lock.release()
         return self._modbusClient.write_multiple_registers(addr,payload)
+    
+    def selPartida(self, part):
+        """
+        Método para selecionar o tipo de partida
+        """
+        self.writeData(self._tags['sel_driver']['addr'], '4X', self._tags['sel_driver']['div'], int(part))
 
+    def ligaEsteira(self, **kwargs):
+        """
+        Método para ligar o motor da esteira
+        """
+        self.selPartida(kwargs.get('tipo'))
+        tipo = self.readData(self._tags['indica_driver']['addr'])
+        match tipo:
+            case 1: #soft-start
+                self.writeData(self._tags['ats48']['addr'], '4X', self._tags['ats48']['div'], 1)
+                self.writeData(self._tags['ats48_acc']['addr'], '4X', self._tags['ats48_acc']['div'],kwargs.get('ace'))
+                self.writeData(self._tags['ats48_dcc']['addr'], '4X', self._tags['ats48_dcc']['div'],kwargs.get('des'))
+            case 2: #inversor
+                self.writeData(self._tags['ats31']['addr'], '4X', self._tags['ats31']['div'], 1)
+                self.writeData(self._tags['ats31_acc']['addr'], '4X', self._tags['ats31_acc']['div'],kwargs.get('ace'))
+                self.writeData(self._tags['ats31_dcc']['addr'], '4X', self._tags['ats3_dcc']['div'],kwargs.get('des'))
+                self.writeData(self._tags['ats31_velocidade']['addr'], '4X', self._tags['ats31_velocidade']['div'],kwargs.get('vel'))
+            case 3: #direta
+                self.writeData(self._tags['tesys']['addr'], '4X', self._tags['tesys']['div'], 1)
+            
+    def desligaEsteira(self, **kwargs):
+        """
+        Método para desligar o motor da esteira
+        """
+        self.selPartida(kwargs.get('tipo'))
+        tipo = self.readData(self._tags['indica_driver']['addr'])
+        match tipo:
+            case 1: #soft-start
+                self.writeData(self._tags['ats48']['addr'], '4X', self._tags['ats48']['div'], 0)
+            case 2: #inversor
+                self.writeData(self._tags['ats31']['addr'], '4X', self._tags['ats31']['div'], 0)
+            case 3: #direta
+                self.writeData(self._tags['tesys']['addr'], '4X', self._tags['tesys']['div'], 0)
+            
+
+    def setSetPoint(self):
+        """
+        Método para definir o setPoint da carga na esteira
+        """
+        self._SP= float(self.ids.carga.text)
+        self.writeData(1302,'FP',1,self._SP)
+    
+    def setP(self):
+        """
+        Método para definir o controle proporcional
+        """
+        self._P= float(self.ids.p.text)
+        self.writeData(1304,'FP',1,self._P)
+
+    def setI(self):
+        """
+        Método para definir o controle integral
+        """
+        self._I= float(self.ids.i.text)
+        self.writeData(1306,'FP',1,self._I)
+
+    def setD(self):
+        """
+        Método para definir o controle derivativo
+        """
+        self._D= float(self.ids.d.text)
+        self.writeData(1308,'FP',1,self._D)
+        
 
     def updateGUI(self):
         """
@@ -141,7 +223,7 @@ class MainWidget(BoxLayout):
         # ADAPTAR PARA O NOSSO: AINDA FALTA ATUALIZAR OS POPUPS
         partida=self._meas['values']['indica_driver'] #armazena o valor selecionado do tipo de partida
         if partida == 1:
-            self.ids['indica_driver'].text='Soft-Start'
+            self.ids['indica_driver'].text='Soft-start'
         if partida == 2:
             self.ids['indica_driver'].text='Inversor'
         if partida == 3:
