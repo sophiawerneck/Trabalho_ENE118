@@ -87,21 +87,21 @@ class MainWidget(BoxLayout):
             print("Erro: ", e.args)
 
 
-    def readData(self, esp_addr):
+    def readData(self, esp_addr=None):
         """
         Método para a leitura dos dados por meio do protocolo MODBUS
         """ 
-        self._lock.acquire()
         self._meas['timestamp'] = datetime.now() # now retorna o horário corrente do sistema operacional
+        #self._lock.acquire()
         for key,value in self._tags['modbusaddrs'].items():
             if esp_addr is not None and value['addr'] != esp_addr:
                 continue
-
+            
             if value['tipo']=='4X': #Holding Register 16bits
                 self._meas['values'][key]=(self._modbusClient.read_holding_registers(value['addr'],1)[0])/value['div']      
             elif value['tipo']=='FP': #Floating Point
                 self._meas['values'][key]=(self.lerFloat(value['addr']))/value['div']
-        self._lock.release()    
+        #self._lock.release()    
     def readDataAtuadores(self,chave):
         """
         Método para leitura dos dados dos atuadores
@@ -119,12 +119,14 @@ class MainWidget(BoxLayout):
         """
         Método para a escrita de dados por meio do protocolo MODBUS
         """
-        self._lock.acquire()
         if tipo=='4X':
+            self._lock.acquire()
             self._modbusClient.write_single_register(addr,int(value*div))
+            self._lock.release()
         elif tipo=='FP':
+            self._lock.acquire()
             print(self.escreveFloat(addr,float(value*div)))
-        self._lock.release()
+            self._lock.release()
 
     def lerFloat(self,addr):
         """
@@ -151,7 +153,7 @@ class MainWidget(BoxLayout):
         """
         Método para selecionar o tipo de partida
         """
-        self.writeData(self._tags['sel_driver']['addr'], '4X', self._tags['sel_driver']['div'], int(part))
+        self.writeData(self._tags['atuadores']['sel_driver']['addr'], '4X', self._tags['atuadores']['sel_driver']['div'], int(part))
 
     def ligaEsteira(self, **kwargs):
         """
@@ -160,16 +162,16 @@ class MainWidget(BoxLayout):
         tipo = self.readData(self._tags['indica_driver']['addr'])
         match tipo:
             case 1: #soft-start
-                self.writeData(self._tags['ats48']['addr'], '4X', self._tags['ats48']['div'], 1)
-                self.writeData(self._tags['ats48_acc']['addr'], '4X', self._tags['ats48_acc']['div'],kwargs.get('acel'))
-                self.writeData(self._tags['ats48_dcc']['addr'], '4X', self._tags['ats48_dcc']['div'],kwargs.get('desacel'))
+                self.writeData(self._tags['atuadores']['ats48']['addr'], '4X', self._tags['atuadores']['ats48']['div'], 1)
+                self.writeData(self._tags['atuadores']['ats48_acc']['addr'], '4X', self._tags['atuadores']['ats48_acc']['div'],kwargs.get('acel'))
+                self.writeData(self._tags['atuadores']['ats48_dcc']['addr'], '4X', self._tags['atuadores']['ats48_dcc']['div'],kwargs.get('desacel'))
             case 2: #inversor
-                self.writeData(self._tags['ats31']['addr'], '4X', self._tags['ats31']['div'], 1)
-                self.writeData(self._tags['ats31_acc']['addr'], '4X', self._tags['ats31_acc']['div'],kwargs.get('acel'))
-                self.writeData(self._tags['ats31_dcc']['addr'], '4X', self._tags['ats3_dcc']['div'],kwargs.get('desacel'))
-                self.writeData(self._tags['ats31_velocidade']['addr'], '4X', self._tags['ats31_velocidade']['div'],kwargs.get('vel'))
+                self.writeData(self._tags['atuadores']['ats31']['addr'], '4X', self._tags['atuadores']['ats31']['div'], 1)
+                self.writeData(self._tags['atuadores']['ats31_acc']['addr'], '4X', self._tags['atuadores']['ats31_acc']['div'],kwargs.get('acel'))
+                self.writeData(self._tags['atuadores']['ats31_dcc']['addr'], '4X', self._tags['atuadores']['ats3_dcc']['div'],kwargs.get('desacel'))
+                self.writeData(self._tags['atuadores']['ats31_velocidade']['addr'], '4X', self._tags['atuadores']['ats31_velocidade']['div'],kwargs.get('vel'))
             case 3: #direta
-                self.writeData(self._tags['tesys']['addr'], '4X', self._tags['tesys']['div'], 1)
+                self.writeData(self._tags['atuadores']['tesys']['addr'], '4X', self._tags['atuadores']['tesys']['div'], 1)
             
     def desligaEsteira(self):
         """
@@ -178,11 +180,11 @@ class MainWidget(BoxLayout):
         tipo = self.readData(self._tags['indica_driver']['addr'])
         match tipo:
             case 1: #soft-start
-                self.writeData(self._tags['ats48']['addr'], '4X', self._tags['ats48']['div'], 0)
+                self.writeData(self._tags['atuadores']['ats48']['addr'], '4X', self._tags['atuadores']['ats48']['div'], 0)
             case 2: #inversor
-                self.writeData(self._tags['ats31']['addr'], '4X', self._tags['ats31']['div'], 0)
+                self.writeData(self._tags['atuadores']['ats31']['addr'], '4X', self._tags['atuadores']['ats31']['div'], 0)
             case 3: #direta
-                self.writeData(self._tags['tesys']['addr'], '4X', self._tags['tesys']['div'], 0)
+                self.writeData(self._tags['atuadores']['tesys']['addr'], '4X', self._tags['atuadores']['tesys']['div'], 0)
             
 
     def setSetPoint(self):
@@ -231,17 +233,11 @@ class MainWidget(BoxLayout):
         self.ids['le_carga'].text=str(round(self._meas['values']['le_carga'],2))+' kgf/cm²' #round: arredondar o valor pra 2 casas decimais 
         self.ids['esteira'].text=str(round(self._meas['values']['esteira'],2))+' m/min'
 
+        self._medicoesPopup.update(self._meas)
+        #self._comandoPopup.update(self._meas)
+
         # Atualização do nível do termômetro com o slider
-        self.ids.lb_temp.size = (self.ids.lb_temp.size[0], self._meas['values']['le_carga']/450*self.ids.termometro.size[1])
-
-        self._medicoesPopup.update(self._meas)
-        #self._comandoPopup.update(self._meas)
-
-    def stopRefresh(self):
-        self._updateThread = False
-
-        self._medicoesPopup.update(self._meas)
-        #self._comandoPopup.update(self._meas)
+        #self.ids.lb_temp.size = (self.ids.lb_temp.size[0], self._meas['values']['le_carga']/450*self.ids.termometro.size[1])
 
     def stopRefresh(self):
         self._updateThread = False
