@@ -83,11 +83,11 @@ class ComandoPopup(Popup):
         Construtor da classe ComandoPopup
         """
         super().__init__(**kwargs)
-        self._partida= None #Partida padrão como inversor
-        self._operacao= 0 #Operação padrão como parado
-        self._acel = float(self.ids.atv31_acc.text)
-        self._desacel = float(self.ids.atv31_dcc.text)
-        self._velInv = float(self.ids.atv31_velocidade.text)
+        #self._partida= None #Partida padrão como inversor
+        #self._operacao= 0 #Operação padrão como parado
+        #self._acel = float(self.ids.atv31_acc.text)
+        #self._desacel = float(self.ids.atv31_dcc.text)
+        #self._velInv = float(self.ids.atv31_velocidade.text)
 
     # def setPartida(self,partida):
     #     self._modbusClient.write_single_register(1324,partida)

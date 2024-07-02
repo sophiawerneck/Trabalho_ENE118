@@ -157,26 +157,24 @@ class MainWidget(BoxLayout):
         """
         Método para ligar o motor da esteira
         """
-        self.selPartida(kwargs.get('tipo'))
         tipo = self.readData(self._tags['indica_driver']['addr'])
         match tipo:
             case 1: #soft-start
                 self.writeData(self._tags['ats48']['addr'], '4X', self._tags['ats48']['div'], 1)
-                self.writeData(self._tags['ats48_acc']['addr'], '4X', self._tags['ats48_acc']['div'],kwargs.get('ace'))
-                self.writeData(self._tags['ats48_dcc']['addr'], '4X', self._tags['ats48_dcc']['div'],kwargs.get('des'))
+                self.writeData(self._tags['ats48_acc']['addr'], '4X', self._tags['ats48_acc']['div'],kwargs.get('acel'))
+                self.writeData(self._tags['ats48_dcc']['addr'], '4X', self._tags['ats48_dcc']['div'],kwargs.get('desacel'))
             case 2: #inversor
                 self.writeData(self._tags['ats31']['addr'], '4X', self._tags['ats31']['div'], 1)
-                self.writeData(self._tags['ats31_acc']['addr'], '4X', self._tags['ats31_acc']['div'],kwargs.get('ace'))
-                self.writeData(self._tags['ats31_dcc']['addr'], '4X', self._tags['ats3_dcc']['div'],kwargs.get('des'))
+                self.writeData(self._tags['ats31_acc']['addr'], '4X', self._tags['ats31_acc']['div'],kwargs.get('acel'))
+                self.writeData(self._tags['ats31_dcc']['addr'], '4X', self._tags['ats3_dcc']['div'],kwargs.get('desacel'))
                 self.writeData(self._tags['ats31_velocidade']['addr'], '4X', self._tags['ats31_velocidade']['div'],kwargs.get('vel'))
             case 3: #direta
                 self.writeData(self._tags['tesys']['addr'], '4X', self._tags['tesys']['div'], 1)
             
-    def desligaEsteira(self, **kwargs):
+    def desligaEsteira(self):
         """
         Método para desligar o motor da esteira
         """
-        self.selPartida(kwargs.get('tipo'))
         tipo = self.readData(self._tags['indica_driver']['addr'])
         match tipo:
             case 1: #soft-start
@@ -192,35 +190,34 @@ class MainWidget(BoxLayout):
         Método para definir o setPoint da carga na esteira
         """
         self._SP= float(self.ids.carga.text)
-        self.writeData(1302,'FP',1,self._SP)
+        self.writeData(self._tags['carga']['addr'],'FP',self._tags['carga']['div'],self._SP)
     
     def setP(self):
         """
         Método para definir o controle proporcional
         """
         self._P= float(self.ids.p.text)
-        self.writeData(1304,'FP',1,self._P)
+        self.writeData(self._tags['p']['addr'],'FP',self._tags['p']['div'],self._P)
 
     def setI(self):
         """
         Método para definir o controle integral
         """
         self._I= float(self.ids.i.text)
-        self.writeData(1306,'FP',1,self._I)
+        self.writeData(self._tags['i']['addr'],'FP',self._tags['i']['div'],self._I)
 
     def setD(self):
         """
         Método para definir o controle derivativo
         """
         self._D= float(self.ids.d.text)
-        self.writeData(1308,'FP',1,self._D)
+        self.writeData(self._tags['d']['addr'],'FP',self._tags['d']['div'],self._D)
         
 
     def updateGUI(self):
         """
         Método para atualização da interface gráfica a partir dos dados lidos
         """
-        # ADAPTAR PARA O NOSSO: AINDA FALTA ATUALIZAR OS POPUPS
         partida=self._meas['values']['indica_driver'] #armazena o valor selecionado do tipo de partida
         if partida == 1:
             self.ids['indica_driver'].text='Soft-start'
@@ -235,7 +232,7 @@ class MainWidget(BoxLayout):
         self.ids['esteira'].text=str(round(self._meas['values']['esteira'],2))+' m/min'
 
         self._medicoesPopup.update(self._meas)
-        self._comandoPopup.update(self._meas)
+        #self._comandoPopup.update(self._meas)
 
     def stopRefresh(self):
         self._updateThread = False
