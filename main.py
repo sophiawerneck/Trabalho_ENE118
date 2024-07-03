@@ -11,43 +11,43 @@ class MainApp(App):
         Método que gera o aplicativo com base no widget principal
         """
         self._widget = MainWidget(scan_time =1000,server_ip='192.168.0.11',server_port=502,
-        modbus_addrs={
-            'indica_driver':{ ########
+        modbusaddrs={
+            'indica_driver':{ 
             'addr':1216,
             'legenda': 'Partida do motor',
             'tipo': '4X',
             'div': 1,
             },
 
-            'encoder':{ #####
+            'encoder':{
             'addr':884,
             'legenda': 'Frequência de rotação do motor',
             'tipo': 'FP',
             'div': 1,
             },
 
-            'esteira':{ #####
+            'esteira':{
             'addr':724,
             'legenda': 'Velocidade da esteira',
             'tipo': 'FP',
             'div': 1,
             },
 
-            'torque':{ #####
+            'torque':{ 
             'addr':1420,
             'legenda': 'Torque do motor',
             'tipo': 'FP',
             'div': 100,
             },
 
-            'temp_carc':{ #####
+            'temp_carc':{ 
             'addr':706,
             'legenda': 'Temperatura da carcaça',
             'tipo': 'FP',
             'div': 10,
             },
 
-            'le_carga':{ ######
+            'le_carga':{
             'addr':710,
             'legenda': 'Carga na esteira',
             'tipo': 'FP',
@@ -110,98 +110,98 @@ class MainApp(App):
             'div': 10,
             },
 
-            'frequencia':{ #####
+            'frequencia':{ 
             'addr':830,
             'legenda': 'Medida Frequência da Rede',
             'tipo': '4X',
             'div': 100,
             },
 
-            'corrente_media':{ ######
+            'corrente_media':{ 
             'addr':845,
             'legenda': 'Corrente Média',
             'tipo': '4X',
             'div': 100,
             },
 
-            'tensao_rs':{ #######
+            'tensao_rs':{ 
             'addr':845,
             'legenda': 'ddp entre Fase R e S',
             'tipo': '4X',
             'div': 10,
             },
 
-            'tensao_st':{ #####
+            'tensao_st':{ 
             'addr':845,
             'legenda': 'ddp entre Fase S e T',
             'tipo': '4X',
             'div': 10,
             },
 
-            'tensao_tr':{ #######
+            'tensao_tr':{ 
             'addr':845,
             'legenda': 'ddp entre Fase T e R',
             'tipo': '4X',
             'div': 10,
             },
 
-            'ativa_total':{ #####
+            'ativa_total':{ 
             'addr':855,
             'legenda': 'Medida Potência Ativa Total',
             'tipo': '4X',
             'div': 1,
             },
 
-            'reativa_total':{ #######
+            'reativa_total':{
             'addr':859,
             'legenda': 'Medida Potência Reativa Total',
             'tipo': '4X',
             'div': 1,
             },
 
-            'aparente_total':{ #######
+            'aparente_total':{ 
             'addr':863,
             'legenda': 'Medida Potência Aparente Total',
             'tipo': '4X',
             'div': 1,
             },
 
-            'fp_total':{ #########
+            'fp_total':{ 
             'addr':871,
             'legenda': 'Medida do Fator de Potência Total',
             'tipo': '4X',
             'div': 1000,
             },
 
-            'demanda_anterior':{ #######
+            'demanda_anterior':{ 
             'addr':1204,
             'legenda': 'Medida de Demanda Anterior',
             'tipo': '4X',
             'div': 1,
             },
 
-            'demanda_atual':{ #######
+            'demanda_atual':{ 
             'addr':1205,
             'legenda': 'Medida de Demanda Atual',
             'tipo': '4X',
             'div': 1,
             },
 
-            'demanda_media':{ ########
+            'demanda_media':{ 
             'addr':1206,
             'legenda': 'Medida de Demanda Média',
             'tipo': '4X',
             'div': 1,
             },
 
-            'demanda_prevista':{ #####
+            'demanda_prevista':{ 
             'addr':1208,
             'legenda': 'Medida de Demanda Prevista',
             'tipo': '4X',
             'div': 1,
             },
 
-            'energia_ativa':{ ########
+            'energia_ativa':{
             'addr':1210,
             'legenda': 'Medida de Energia Ativa',
             'tipo': '4X',
@@ -291,9 +291,9 @@ class MainApp(App):
                 'tipo':'4X',
                 'div':1.0
             },
-            'carga':{
-                'addr':1302,
-                #Define a Carga na esteira no PID (SP- Set Point)
+            'mv_escreve':{
+                'addr':1310,
+                #Define o valor da Variável Manipulada (MV em porcentagem)
                 'tipo':'FP',
                 'div':1.0
             },

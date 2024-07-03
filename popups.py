@@ -83,66 +83,20 @@ class ComandoPopup(Popup):
         Construtor da classe ComandoPopup
         """
         super().__init__(**kwargs)
-        #self._partida= None #Partida padrão como inversor
-        #self._operacao= 0 #Operação padrão como parado
-        #self._acel = float(self.ids.atv31_acc.text)
-        #self._desacel = float(self.ids.atv31_dcc.text)
-        #self._velInv = float(self.ids.atv31_velocidade.text)
+        self._acc = int(self.ids.in_acel.text)
+        self._dcc = int(self.ids.in_desacel.text)
+        self._velInv = int(self.ids.slider_vel.value)
 
-    # def setPartida(self,partida):
-    #     self._modbusClient.write_single_register(1324,partida)
-    #     self._partida=partida
-    # def setOperacao(self,operacao):
-    #     if self._partida == 1:
-    #         self._modbusClient.write_single_register(1316,operacao)
-    #     elif self._partida == 2:
-    #         self._modbusClient.write_single_register(1312,operacao)
-    #     elif self._partida == 3:
-    #         self._modbusClient.write_single_register(1319,operacao)
+    def update(self,medida):
+        self._partida = medida['values']['indica_driver']
+        if self._partida == 1:
+            medida['values']['ats48_acc']= self._acc
+            medida['values']['ats48_dcc']= self._dcc
 
-    # def setAcel(self):
-    #     self._acel=float(self.ids.atv31_acc.text) #o id está relacionado ao inversor mas esse campo tb pode ser preenchido com dado do soft-start
-    # def setDesacel(self):
-    #     self._desacel=float(self.ids.atv31_dcc.text) #o id está relacionado ao inversor mas esse campo tb pode ser preenchido com dado do soft-start
-    
-    # def setVelInv(self):
-    #     self._velInv=int(self.ids.atv31_velocidade.text)
-    # def setVelSlider(self,vel):
-    #     self._velInv=vel
-
-
-
-    # def update(self,medida):
-    #     medida['values']['tesys']=None #operação da partida direta
-    #     medida['values']['ats48']=None #operação do soft-start
-    #     medida['values']['atv31']=None #operação do inversor
-
-    #     medida['values']['ats48_acc']=None #aceleração soft-started
-    #     medida['values']['ats48_dcc']=None #desaceleração
-
-    #     medida['values']['atv31_acc']=None #aceleração inversor
-    #     medida['values']['atv31_dcc']=None #desacel
-    #     medida['values']['atv31_velocidade']=None #vel
-
-
-    #     if self._partida is not None:
-    #         if self._partida== 'Direta':
-    #             medida['values']['tesys']=self._operacao
-    #             medida['values']['sel_driver']=3 #indica a partida
-
-
-    #         elif self._partida == 'Soft-start':
-    #             medida['values']['ats48']=self._operacao
-    #             medida['values']['sel_driver']=1
-    #             medida['values']['ats48_acc']= self._acel
-    #             medida['values']['ats48_dcc']= self._desacel
-
-    #         elif self._partida == 'Inversor':
-    #             medida['values']['atv31']=self._operacao
-    #             medida['values']['sel_driver']=2
-    #             medida['values']['atv31_acc']= self._acel
-    #             medida['values']['atv31_dcc']= self._desacel
-    #             medida['values']['atv31_velocidade']= self._velInv
+        elif self._partida == 2:
+            medida['values']['atv31_acc']= self._acc
+            medida['values']['atv31_dcc']= self._dcc
+            medida['values']['atv31_velocidade']= self._velInv
 
 
 class PidPopup(Popup):

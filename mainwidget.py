@@ -209,33 +209,33 @@ class MainWidget(BoxLayout):
                 self.writeData(self._tags['atuadores']['tesys']['addr'], '4X', self._tags['atuadores']['tesys']['div'], 2)
             
 
-    def setSetPoint(self):
+    def setMV(self):
         """
         Método para definir o setPoint da carga na esteira
         """
-        self._SP= float(self.ids.carga.text)
-        self.writeData(self._tags['carga']['addr'],'FP',self._tags['carga']['div'],self._SP)
+        self._MV= (self.ids.mv_escreve.text)
+        self.writeData(self._tags['atuadores']['mv_escreve']['addr'],'FP',self._tags['atuadores']['mv_escreve']['div'],self._MV)
     
     def setP(self):
         """
         Método para definir o controle proporcional
         """
-        self._P= float(self.ids.p.text)
-        self.writeData(self._tags['p']['addr'],'FP',self._tags['p']['div'],self._P)
+        self._P= (self.ids.p.text)
+        self.writeData(self._tags['atuadores']['p']['addr'],'FP',self._tags['atuadores']['p']['div'],self._P)
 
     def setI(self):
         """
         Método para definir o controle integral
         """
-        self._I= float(self.ids.i.text)
-        self.writeData(self._tags['i']['addr'],'FP',self._tags['i']['div'],self._I)
+        self._I= (self.ids.i.text)
+        self.writeData(self._tags['atuadores']['i']['addr'],'FP',self._tags['atuadores']['i']['div'],self._I)
 
     def setD(self):
         """
         Método para definir o controle derivativo
         """
-        self._D= float(self.ids.d.text)
-        self.writeData(self._tags['d']['addr'],'FP',self._tags['d']['div'],self._D)
+        self._D= (self.ids.d.text)
+        self.writeData(self._tags['atuadores']['d']['addr'],'FP',self._tags['atuadores']['d']['div'],self._D)
         
 
     def updateGUI(self):
@@ -256,7 +256,7 @@ class MainWidget(BoxLayout):
         self.ids['esteira'].text=str(round(self._meas['values']['esteira'],2))+' m/min'
 
         self._medicoesPopup.update(self._meas)
-        #self._comandoPopup.update(self._meas)
+        self._comandoPopup.update(self._meas)
 
         # Atualização do nível do termômetro com o slider
         #self.ids.lb_temp.size = (self.ids.lb_temp.size[0], self._meas['values']['le_carga']/450*self.ids.termometro.size[1])

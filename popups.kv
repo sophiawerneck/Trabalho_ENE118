@@ -401,7 +401,7 @@
             Button:
                 text: "Reset"
                 height: 100
-                on_release: app.root.ligaEsteira()
+                on_release: app.root.resetEsteira()
         
         
         BoxLayout:
@@ -421,7 +421,7 @@
                         Label:
                             text: "Acel.(s)"
                         TextInput:
-                            id: in_acel #usamos o id relacionado a tag do inversor mas esse campo tb é válido para o soft-start
+                            id: in_acel # inversor/soft-start
                             font_size: 14
                             text: "10"
                             haligh: "center"
@@ -481,7 +481,7 @@
                     text: "Automático"
                     size: 50, 10
                     group: 'aut/man'
-                    active: True
+                    active: False
                 Label:
                     text:"Manual"
                     font_size: 14
@@ -490,22 +490,22 @@
                     text: "Manual"
                     size: 50, 10
                     group: 'aut/man'                   
-                    active: False
+                    active: True
                 
         GridLayout:
             cols: 2
             rows:4
             Label:
-                text: "Defina o Setpoint(SP):"
+                text: "Defina o valor da variável manipulada -MV (%):"
                 font_size: 14
             TextInput:
-                id: carga
+                id: mv_escreve
                 font_size: 14
                 text: '-'
                 haligh: "center"
                 valign: "middle"
                 padding: 8,8,8,8
-                on_text_validate: app.root.setSetPoint()
+                on_text_validate: app.root.setMV()
                 multiline: False
             Label:
                 text: "P:"
