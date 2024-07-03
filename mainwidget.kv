@@ -81,13 +81,13 @@
             id: carga
             source: 'imgs/barra.png'
             size_hint: 0.15, 0.15
-            pos_hint: {'x':0.51,'y':0.24}
+            pos_hint: {'x':0.40, 'y':0.68}
 
         Image:
             id: vel
             source: 'imgs/barra.png'
             size_hint: 0.15, 0.15
-            pos_hint: {'x':0.67,'y':0.24}
+            pos_hint: {'x':0.55, 'y':0.68}
         
         Label:
             id: indica_driver
@@ -126,7 +126,7 @@
             orientation: 'vertical'
             size_hint: (0.1,0.1)
             background_color: 0,0,0,0
-            pos_hint: {'x':0.54, 'y':0.4}
+            pos_hint: {'x':0.42, 'y':0.85}
             Label:
                 text: 'Carga na Esteira'
                 font_size: 20
@@ -143,7 +143,7 @@
         BoxLayout:
             orientation: 'vertical'
             size_hint: (0.1,0.1)
-            pos_hint: {'x':0.7, 'y':0.4}
+            pos_hint: {'x':0.58, 'y':0.85}
             Label:
                 text: 'Vel. da Esteira'
                 font_size: 20
@@ -192,6 +192,10 @@
             size_hint:(0.2,0.075)
             padding: 10,10
             on_release: root._comandoPopup.open()
+            
+
+            
+            
             
 
             
