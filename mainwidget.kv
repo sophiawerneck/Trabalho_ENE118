@@ -48,46 +48,62 @@
             source: 'imgs/esteira2.png'
 
 
-        #Image:
-         #   id: lb_rpm
-          #  source: 'imgs/verde.png'
-           # size_hint: 0.15, 0.15
-            #pos: (self.pos[0]+self.width*1.5, self.pos[1])
-	        #canvas:
-		        #Color:
-			        #rgb: 1,0,0
-		        #Rectangle:
-			        #size: self.size
-			        #pos: (self.pos[0]+self.width*1.5, self.pos[1]) #centralizada em relação ao lb
-        Image:
-            id: rpm
+	Image:
+            id: barra_rpm
             source: 'imgs/barra.png'
             size_hint: 0.15, 0.15
             pos_hint: {'x':0.10,'y':0.14}
+        Image:
+            id: seta_rpm
+            source: 'imgs/seta.png'
+            size_hint: 0.04, 0.04
+            pos: (0.17,0.13)
 
         Image:
-            id: nm
+            id: barra_nm
             source: 'imgs/barra.png'
             size_hint: 0.15, 0.15
             pos_hint: {'x':0.20,'y':0.14}
+        Image:
+            id: seta_nm
+            source: 'imgs/seta.png'
+            size_hint: 0.04, 0.04
+            pos_hint: (0.27,0.13)
 
         Image:
-            id: temp
+            id: barra_temp
             source: 'imgs/barra.png'
             size_hint: 0.15, 0.15
             pos_hint: {'x':0.30,'y':0.14}
+        Image:
+            id: seta_temp
+            source: 'imgs/seta.png'
+            size_hint: 0.04, 0.04
+            pos: (0.37,0.13)
+
 
         Image:
-            id: carga
+            id: barra_carga
             source: 'imgs/barra.png'
             size_hint: 0.15, 0.15
             pos_hint: {'x':0.40, 'y':0.68}
+        Image:
+            id: seta_carga
+            source: 'imgs/seta.png'
+            size_hint: 0.04, 0.04
+            pos: (0.47,0.67)
+
 
         Image:
-            id: vel
+            id: barra_vel
             source: 'imgs/barra.png'
             size_hint: 0.15, 0.15
             pos_hint: {'x':0.55, 'y':0.68}
+        Image:
+            id: seta_vel
+            source: 'imgs/seta.png'
+            size_hint: 0.04, 0.04
+            pos: (0.62,0.67)
         
         Label:
             id: indica_driver
