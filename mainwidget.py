@@ -258,8 +258,12 @@ class MainWidget(BoxLayout):
         self._medicoesPopup.update(self._meas)
         self._comandoPopup.update(self._meas)
 
-        # Atualização do nível do termômetro com o slider
-        #self.ids.lb_temp.size = (self.ids.lb_temp.size[0], self._meas['values']['le_carga']/450*self.ids.termometro.size[1])
+        # Atualização das barras de escala dinâmica
+        self.ids.seta_rpm.pos = (self.ids.seta_rpm.pos[0], self._meas['values']['encoder']/400*self.ids.barra_rpm.size[1]) # 400:valor máximo de cada barra, alterar pro valor certo
+        self.ids.seta_nm.pos = (self.ids.seta_nm.pos[0], self._meas['values']['torque']/400*self.ids.barra_nm.size[1])
+        self.ids.seta_temp.pos = (self.ids.seta_temp.pos[0], self._meas['values']['temp_carc']/400*self.ids.barra_temp.size[1])
+        self.ids.seta_carga.pos = (self.ids.seta_carga.pos[0], self._meas['values']['le_carga']/400*self.ids.barra_carga.size[1])
+        self.ids.seta_vel.pos = (self.ids.seta_vel.pos[0], self._meas['values']['esteira']/400*self.ids.barra_vel.size[1])
 
     def stopRefresh(self):
         self._updateThread = False
