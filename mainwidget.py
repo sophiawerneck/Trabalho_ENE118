@@ -39,7 +39,7 @@ class MainWidget(BoxLayout):
         self._lock=Lock()
         
         # Leitura das tags (readData vai iterar o dicionario)
-        for key,value in kwargs.get('modbus_addrs').items():
+        for key,value in kwargs.get('modbusaddrs').items():
             plot_color=(random.random(),random.random(),random.random(),1)
             self._tags['modbusaddrs'][key] = {'addr':value['addr'],'color':plot_color,'legenda':value['legenda'],'tipo':value['tipo'],'div':value['div']}
             #cria a tag com as mesmas chaves usadas no dicionario modbus_addrs
@@ -92,16 +92,16 @@ class MainWidget(BoxLayout):
         Método para a leitura dos dados por meio do protocolo MODBUS
         """ 
         self._meas['timestamp'] = datetime.now() # now retorna o horário corrente do sistema operacional
-        #self._lock.acquire()
         for key,value in self._tags['modbusaddrs'].items():
             if esp_addr is not None and value['addr'] != esp_addr:
                 continue
             
             if value['tipo']=='4X': #Holding Register 16bits
-                self._meas['values'][key]=(self._modbusClient.read_holding_registers(value['addr'],1)[0])/value['div']      
+                self._lock.acquire()
+                self._meas['values'][key]=(self._modbusClient.read_holding_registers(value['addr'],1)[0])/value['div'] 
+                self._lock.release()
             elif value['tipo']=='FP': #Floating Point
-                self._meas['values'][key]=(self.lerFloat(value['addr']))/value['div']
-        #self._lock.release()    
+                self._meas['values'][key]=(self.lerFloat(value['addr']))/value['div']    
     def readDataAtuadores(self,chave):
         """
         Método para leitura dos dados dos atuadores
@@ -154,37 +154,59 @@ class MainWidget(BoxLayout):
         Método para selecionar o tipo de partida
         """
         self.writeData(self._tags['atuadores']['sel_driver']['addr'], '4X', self._tags['atuadores']['sel_driver']['div'], int(part))
+        print("partida selecionada: ", part)
 
     def ligaEsteira(self, **kwargs):
         """
         Método para ligar o motor da esteira
         """
-        tipo = self.readData(self._tags['indica_driver']['addr'])
+        print ("ligou")
+        with self._lock:
+            tipo = self._modbusClient.read_holding_registers(self._tags['modbusaddrs']['indica_driver']['addr'],1)[0]
+        print(tipo)
         match tipo:
             case 1: #soft-start
+                print ("ligou")
                 self.writeData(self._tags['atuadores']['ats48']['addr'], '4X', self._tags['atuadores']['ats48']['div'], 1)
                 self.writeData(self._tags['atuadores']['ats48_acc']['addr'], '4X', self._tags['atuadores']['ats48_acc']['div'],kwargs.get('acel'))
                 self.writeData(self._tags['atuadores']['ats48_dcc']['addr'], '4X', self._tags['atuadores']['ats48_dcc']['div'],kwargs.get('desacel'))
             case 2: #inversor
-                self.writeData(self._tags['atuadores']['ats31']['addr'], '4X', self._tags['atuadores']['ats31']['div'], 1)
-                self.writeData(self._tags['atuadores']['ats31_acc']['addr'], '4X', self._tags['atuadores']['ats31_acc']['div'],kwargs.get('acel'))
-                self.writeData(self._tags['atuadores']['ats31_dcc']['addr'], '4X', self._tags['atuadores']['ats3_dcc']['div'],kwargs.get('desacel'))
-                self.writeData(self._tags['atuadores']['ats31_velocidade']['addr'], '4X', self._tags['atuadores']['ats31_velocidade']['div'],kwargs.get('vel'))
+                print ("ligou")
+                self.writeData(self._tags['atuadores']['atv31']['addr'], '4X', self._tags['atuadores']['atv31']['div'], 1)
+                self.writeData(self._tags['atuadores']['atv31_acc']['addr'], '4X', self._tags['atuadores']['atv31_acc']['div'],kwargs.get('acel'))
+                self.writeData(self._tags['atuadores']['atv31_dcc']['addr'], '4X', self._tags['atuadores']['atv31_dcc']['div'],kwargs.get('desacel'))
+                self.writeData(self._tags['atuadores']['atv31_velocidade']['addr'], '4X', self._tags['atuadores']['atv31_velocidade']['div'],kwargs.get('vel'))
             case 3: #direta
+                print ("ligou")
                 self.writeData(self._tags['atuadores']['tesys']['addr'], '4X', self._tags['atuadores']['tesys']['div'], 1)
             
     def desligaEsteira(self):
         """
         Método para desligar o motor da esteira
         """
-        tipo = self.readData(self._tags['indica_driver']['addr'])
+        with self._lock:
+            tipo = self._modbusClient.read_holding_registers(self._tags['modbusaddrs']['indica_driver']['addr'],1)[0]
         match tipo:
             case 1: #soft-start
                 self.writeData(self._tags['atuadores']['ats48']['addr'], '4X', self._tags['atuadores']['ats48']['div'], 0)
             case 2: #inversor
-                self.writeData(self._tags['atuadores']['ats31']['addr'], '4X', self._tags['atuadores']['ats31']['div'], 0)
+                self.writeData(self._tags['atuadores']['atv31']['addr'], '4X', self._tags['atuadores']['atv31']['div'], 0)
             case 3: #direta
                 self.writeData(self._tags['atuadores']['tesys']['addr'], '4X', self._tags['atuadores']['tesys']['div'], 0)
+
+    def resetEsteira(self):
+        """
+        Método para desligar o motor da esteira
+        """
+        with self._lock:
+            tipo = self._modbusClient.read_holding_registers(self._tags['modbusaddrs']['indica_driver']['addr'],1)[0]
+        match tipo:
+            case 1: #soft-start
+                self.writeData(self._tags['atuadores']['ats48']['addr'], '4X', self._tags['atuadores']['ats48']['div'], 2)
+            case 2: #inversor
+                self.writeData(self._tags['atuadores']['atv31']['addr'], '4X', self._tags['atuadores']['atv31']['div'], 2)
+            case 3: #direta
+                self.writeData(self._tags['atuadores']['tesys']['addr'], '4X', self._tags['atuadores']['tesys']['div'], 2)
             
 
     def setSetPoint(self):
