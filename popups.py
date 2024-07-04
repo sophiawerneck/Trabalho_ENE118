@@ -51,9 +51,9 @@ class MedicoesPopup(Popup):
         self.ids.demanda_prevista.text = str(medida['values']['demanda_prevista'])+' W'
         self.ids.demanda_media.text = str(medida['values']['demanda_media'])+' W'
         self.ids.demanda_anterior.text = str(medida['values']['demanda_anterior'])+' W'
+        self.ids.demanda_pico.text = str(medida['values']['demanda_pico'])+' W'
         self.ids.energia_ativa.text = str(medida['values']['energia_ativa'])+' kW/h'
         self.ids.ativa_total.text = str(medida['values']['ativa_total'])+' W'
-        self.ids.reativa_total.text = str(medida['values']['reativa_total'])+' VA/r'
         self.ids.aparente_total.text = str(medida['values']['aparente_total'])+' VA'
         self.ids.fp_total.text = str(medida['values']['fp_total'])
         self.ids.tensao_rs.text = str(medida['values']['tensao_rs'])+' V'

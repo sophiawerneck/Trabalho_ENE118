@@ -152,9 +152,9 @@ class MainApp(App):
             'div': 1,
             },
 
-            'reativa_total':{
-            'addr':859,
-            'legenda': 'Medida Potência Reativa Total',
+            'demanda_pico':{
+            'addr':1207,
+            'legenda': 'Medida de Demanda de Pico',
             'tipo': '4X',
             'div': 1,
             },
