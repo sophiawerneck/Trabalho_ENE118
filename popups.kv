@@ -1,4 +1,4 @@
-#kivy 1.11.1
+#:kivy 1.11.1
 <ModbusPopup>:
     title: "Configurações MODBUS"
     size_hint_y: None
@@ -568,5 +568,122 @@
                 font_size: 14
                 haligh: "center"
                 valign: "middle"
+
+<SelectDataGraphPopup>:
+    title: " Escolha do dado"
+    size_hint_y: 1
+    size_hint_x: 1.5
+    BoxLayout:
+        orientation: "horizontal"
+        BoxLayout:
+            orientation: "vertical"
+            CheckBox:
+                id: checkencoder
+                group: "select_group"
+                on_active: app.root._selection='encoder' if app.root is not None else None
+            CheckBox:
+                id: checktorque
+                group: "select_group"
+                on_active: app.root._selection='torque' if app.root is not None else None
+            CheckBox:
+                id: checktempcarc
+                group: "select_group"
+                on_active: app.root._selection='temp_carc' if app.root is not None else None
+            CheckBox:
+                id: checklecarga
+                group: "select_group"
+                on_active: app.root._selection='le_carga' if app.root is not None else None
+            CheckBox:
+                id: checkesteira
+                group: "select_group"
+                on_active: app.root._selection='esteira' if app.root is not None else None
+            
+        BoxLayout:
+            orientation: "vertical"
+            Label:
+                text: "Frequência de rotação (Hz)"
+            Label:
+                text: "Torque (N.m)"
+            Label:
+                text: "Temperatura na carcaça (ºC)"
+            Label:
+                text: "Carga do motor (Kgf/m²)"
+            Label:
+                text: "Velocidade da esteira (m/min)"
+
+<HistGraphPopup>:
+    title: " Histórico de dados"
+    BoxLayout:
+        orientation: "vertical"
+        TimeSeriesGraph:
+            id: graph
+            xlabel: "Tempo"
+            ylabel: "Valores"
+            background_color: 0.5, 0.5, 0.5, 0.5
+            x_ticks_minor: 5
+            x_ticks_major: 10
+            y_ticks_major: 100
+            y_grid_label: True
+            x_grid_label: True
+            padding: 5
+            x_grid: True
+            y_grid: True
+            xmin: 0 #xmax definido na classe DataGraphPopup
+            ymin: 0
+            ymax: 500
+        BoxLayout:
+            id: sensores
+            orientation: "horizontal"
+            size_hint: (1,0.1)
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint: (1,0.1)
+            BoxLayout:
+                orientation: "horizontal"
+                size_hint: (0.5,1)
+                Label:
+                    text: "Timestamp inicial \r\n [size=12](DD/MM/AAAA HH:MM:SS)[/size]"
+                    halign: "center"
+                    markup: True
+                TextInput:
+                    id: txt_init_time
+                    multiline: False
+                    size_hint: (1,0.8)
+                    halign: "center"
+                    valign: "middle"
+                Label:
+                    text: "Timestamp final \r\n [size=12](DD/MM/AAAA HH:MM:SS)[/size]"
+                    halign: "center"
+                    markup: True
+                TextInput:
+                    id: txt_final_time
+                    multiline: False
+                    size_hint: (1,0.8)
+                    halign: "center"
+                    valign: "middle"
+                Button:
+                    text: "Fechar"
+                    size_hint: (1,0.8)
+                    on_release: root.dismiss()
+
+<LabeledCheckBoxHistGraph>:
+    orientation: "horizontal"
+    size_hint: (0.05,1)
+    BoxLayout:
+        orientation: "vertical"
+        CheckBox:
+            id: checkbox
+            group: "bd_group"
+            on_active: app.root.getDataDB()
+        Label:
+            id: label
+            font_size: 10
+            bold: True
+            
+            
+
+
+
 
 

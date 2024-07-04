@@ -48,7 +48,7 @@
             source: 'imgs/esteira2.png'
 
 
-	Image:
+	    Image:
             id: barra_rpm
             source: 'imgs/barra.png'
             size_hint: 0.15, 0.15
@@ -68,7 +68,7 @@
             id: seta_nm
             source: 'imgs/seta.png'
             size_hint: 0.04, 0.04
-            pos_hint: (0.27,0.13)
+            pos: (0.27,0.13)
 
         Image:
             id: barra_temp
@@ -200,6 +200,7 @@
             pos_hint:{'x':0.70, 'y':0.05}
             size_hint:(0.2,0.075)
             padding: 10,10
+            on_release:root._hgraph.open()
             
         Button:
             id: btnComando

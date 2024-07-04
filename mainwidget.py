@@ -1,7 +1,7 @@
 from kivy.uix.boxlayout import BoxLayout
-from popups import ModbusPopup,ScanPopup, ComandoPopup, MedicoesPopup, PidPopup
-from pyModbusTCP.client import ModbusClient
+from popups import ModbusPopup,ScanPopup, ComandoPopup, MedicoesPopup, PidPopup, SelectDataGraphPopup, HistGraphPopup
 from kivy.core.window import Window
+from pyModbusTCP.client import ModbusClient
 from threading import Thread
 from time import sleep
 from datetime import datetime
@@ -10,6 +10,10 @@ from pymodbus.payload import BinaryPayloadDecoder
 from pymodbus.payload import BinaryPayloadBuilder
 from pymodbus.constants import Endian
 from threading import Lock
+from models import DadosEsteira
+from kivy_garden.graph import LinePlot
+from db import Base,Session,engine
+from timeseriesgraph import TimeSeriesGraph
 
 class MainWidget(BoxLayout):
     """
@@ -32,11 +36,13 @@ class MainWidget(BoxLayout):
         self._medicoesPopup = MedicoesPopup()
         self._comandoPopup = ComandoPopup()
         self._pidPopup = PidPopup()
+        self._selectData= SelectDataGraphPopup()
         self._modbusClient = ModbusClient(host = self._serverIP, port = self._serverPort)
         self._meas = {} #armazenar as tags
         self._meas['timestamp'] = None
         self._meas['values'] = {} # Valores das tags do sistema
         self._lock=Lock()
+        self._selection='potAtivaTotal'
         
         # Leitura das tags (readData vai iterar o dicionario)
         for key,value in kwargs.get('modbusaddrs').items():
@@ -47,6 +53,7 @@ class MainWidget(BoxLayout):
         for key,value in kwargs.get('atuadores').items():
            self._tags['atuadores'][key] = {'addr':value['addr'],'tipo':value['tipo'],'div':value['div']}
 
+        self._hgraph= HistGraphPopup(tags=self._tags['modbusaddrs'])
 
     def startDataRead(self, ip, port):
         """
@@ -62,8 +69,10 @@ class MainWidget(BoxLayout):
             self._modbusClient.open()
             Window.set_system_cursor("arrow")
             if self._modbusClient.is_open: # se o cliente estiver conectado eu começo uma nova thread
-                self._updateThread = Thread(target=self.updater) #thread secundaria para atualização da interface grafica (para leitura de dados e atualização do BD) (updater)
+                self._updateThread = Thread(target=self.updater)
+                self._dataBankThread = Thread(target=self.updateDataBank) #thread secundaria para atualização da interface grafica (para leitura de dados e atualização do BD) (updater)
                 self._updateThread.start()
+                self._dataBankThread.start()
                 self.ids.img_con.source = 'imgs/conectado.png'
                 self._modbusPopup.dismiss()
             else: 
@@ -79,12 +88,75 @@ class MainWidget(BoxLayout):
         try:
             while self._uptadeWidgets:
                 self.readData() #ler os dados MODBUS
-                self.updateGUI() #atualizar a interface
-                #inserir os dados no BD
+                self.updateGUI()#atualizar a interface
+                self.updateDataBank() #inserir os dados no BD
                 sleep(self._scan_time/1000)     
         except Exception as e:
             self._modbusClient.close()
             print("Erro: ", e.args)
+
+    def updateDataBank(self):
+        """
+        Método para a inserção dos dados no Banco de dados
+        """
+        try:
+            self._dados['timestamp']=self._meas['timestamp']
+            for key in self._tags['modbusaddrs']:
+                self._dados[key]=self._meas['values'][key]
+            dado=DadosEsteira(**self._dados)
+            self._lock.acquire()
+            self._session.add(dado)
+            self._session.commit()
+            self._lock.release()
+        except Exception as e:
+            print("Erro na atualização do banco:",e.args)
+    def getDataDB(self):
+        """
+        Método que coleta as informações da interface pelo usuário
+        e requisita a busca no Banco de dados
+        """
+        try:
+            init_t=self._hgraph.ids.txt_init_time.text
+            final_t=self._hgraph.ids.txt_final_time.text
+            init_t=datetime.strptime(init_t,'%d/%m/%Y %H:%M:%S')
+            final_t=datetime.strptime(final_t,'%d/%m/%Y %H:%M:%S')
+                
+            if init_t is None or final_t is None:
+                return
+            self._lock.acquire()
+            results=self._session.query(DadosEsteira).filter(DadosEsteira.timestamp.between(init_t,final_t)).all()
+            self._lock.release()
+            results = [reg.get_resultsdic() for reg in results]
+            sensorAtivo=[]
+            for sensor in self._hgraph.ids.sensores.children:
+                if sensor.ids.checkbox.active:
+                    sensorAtivo.append(sensor.ids.label.text)
+            if results is None or len(results)==0:
+                return
+            self._hgraph.ids.graph.clearPlots()
+            tempo=[]
+            for i in results:
+                for key,value in i.items():
+                    if key=='timestamp':
+                        tempo.append(value)
+                        continue
+                    elif key=='id':
+                        continue
+                    for s in sensorAtivo:
+                        if key==s:
+                            p= LinePlot(line_width=1)
+                            p.points = [(x, results[x][key]) for x in range(0,len(results))]
+                            self._hgraph.ids.graph.add_plot(p)
+                            self._hgraph.ids.graph.ymax=self._tags['modbusaddrs'][s]['escalamax']
+                            self._hgraph.ids.graph.y_ticks_major=self._tags['modbusaddrs'][s]['escalamax']/5
+                            self._hgraph.ids.graph.ylabel= self._tags['modbusaddrs'][s]['legenda']
+            self._hgraph.ids.graph.xmax=len(results)
+            self._hgraph.ids.update_x_labels(tempo)
+            
+
+        except Exception as e:
+            print("Erro na busca no banco:",e.args)
+
 
 
     def readData(self, esp_addr=None):

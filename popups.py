@@ -1,5 +1,6 @@
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+from kivy.uix.boxlayout import BoxLayout
 
 class ModbusPopup(Popup):
     """
@@ -109,3 +110,29 @@ class PidPopup(Popup):
         self._P=5.0
         self._I=5.0
         self._D=5.0
+
+class SelectDataGraphPopup(Popup):
+    def __init__(self,**kwargs):
+        super().__init__(**kwargs)
+
+class HistGraphPopup(Popup):
+    def __init__(self, **kwargs):
+        super().__init__()
+        self.tags = kwargs.get('tags', {})
+        self.populate_checkboxes()
+
+    def populate_checkboxes(self):
+        self.ids.sensores.clear_widgets() 
+        count = 0
+        for key, value in self.tags.items():
+            if count < 5:  
+                cb = LabeledCheckBoxHistGraph()
+                cb.ids.label.text = key
+                cb.id = key
+                self.ids.sensores.add_widget(cb)
+                count += 1
+            else:
+                break
+
+class LabeledCheckBoxHistGraph(BoxLayout):
+      pass
