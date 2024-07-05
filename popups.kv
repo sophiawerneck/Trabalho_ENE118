@@ -1,4 +1,4 @@
-#:kivy 1.11.1
+#kivy 1.11.1
 <ModbusPopup>:
     title: "Configurações MODBUS"
     size_hint_y: None
@@ -393,7 +393,7 @@
             Button:                        
                 text: "Ligar"
                 height: 100   
-                on_release: app.root.ligaEsteira(acel = int(in_acel.text), desacel = int(in_desacel.text), vel = int(slider_vel.value))          
+                on_release: app.root.ligaEsteira(acel = int(in_acel.text), desacel = int(in_desacel.text), vel = int(velInversor.text))          
             Button:
                 text: "Desligar"
                 height: 100
@@ -446,7 +446,22 @@
                             bold: True
                         Label:
                             haligh: "center"
-                            text:"      Min: 10s Max: 60s"        
+                            text:"      Min: 10s Max: 60s"     
+
+                    BoxLayout:
+                        orientation: "vertical"
+                        Label:
+                            text:"Velocidade(0 a 60Hz)"
+                            bold: True
+                        TextInput:
+                            id: velInversor
+                            font_size: 14
+                            text: "60"
+                            haligh: "center"
+                            valign: "middle"
+                            multiline: False
+
+
                 Slider:
                     id: slider_vel
                     min: 0
@@ -454,6 +469,7 @@
                     value: 0
                     step: 1
                     orientation: 'vertical'
+                    on_touch_move: app.root.setSlider(self.value)
                     size_hint: (None, 1)
                     width: 100
             
@@ -680,10 +696,3 @@
             id: label
             font_size: 10
             bold: True
-            
-            
-
-
-
-
-

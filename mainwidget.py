@@ -22,6 +22,7 @@ class MainWidget(BoxLayout):
     _updateThread = None
     _uptadeWidgets = True
     _tags = {'modbusaddrs':{},'atuadores':{}}
+    _dados={}
 
     def __init__(self, **kwargs):
         """
@@ -43,6 +44,7 @@ class MainWidget(BoxLayout):
         self._meas['values'] = {} # Valores das tags do sistema
         self._lock=Lock()
         self._selection='potAtivaTotal'
+        self._session = Session()
         
         # Leitura das tags (readData vai iterar o dicionario)
         for key,value in kwargs.get('modbusaddrs').items():
@@ -89,7 +91,7 @@ class MainWidget(BoxLayout):
             while self._uptadeWidgets:
                 self.readData() #ler os dados MODBUS
                 self.updateGUI()#atualizar a interface
-                self.updateDataBank() #inserir os dados no BD
+                #self.updateDataBank() #inserir os dados no BD
                 sleep(self._scan_time/1000)     
         except Exception as e:
             self._modbusClient.close()
@@ -145,7 +147,7 @@ class MainWidget(BoxLayout):
                     for s in sensorAtivo:
                         if key==s:
                             p= LinePlot(line_width=1)
-                            p.points = [(x, results[x][key]) for x in range(0,len(results))]
+                            #p.points = [(x, results[x][key]) for x in range(0,len(results))]
                             self._hgraph.ids.graph.add_plot(p)
                             self._hgraph.ids.graph.ymax=self._tags['modbusaddrs'][s]['escalamax']
                             self._hgraph.ids.graph.y_ticks_major=self._tags['modbusaddrs'][s]['escalamax']/5
@@ -174,6 +176,7 @@ class MainWidget(BoxLayout):
                 self._lock.release()
             elif value['tipo']=='FP': #Floating Point
                 self._meas['values'][key]=(self.lerFloat(value['addr']))/value['div']    
+   
     def readDataAtuadores(self,chave):
         """
         Método para leitura dos dados dos atuadores
@@ -279,6 +282,12 @@ class MainWidget(BoxLayout):
                 self.writeData(self._tags['atuadores']['atv31']['addr'], '4X', self._tags['atuadores']['atv31']['div'], 2)
             case 3: #direta
                 self.writeData(self._tags['atuadores']['tesys']['addr'], '4X', self._tags['atuadores']['tesys']['div'], 2)
+
+    def setSlider(self,valor):
+        """
+        Método para habilitar o slider da velocidade do inversor
+        """
+        self.writeData(self._tags['atuadores']['atv31_velocidade']['addr'], '4X', self._tags['atuadores']['atv31_velocidade']['div'],valor)
             
 
     def setMV(self):
@@ -331,11 +340,11 @@ class MainWidget(BoxLayout):
         self._comandoPopup.update(self._meas)
 
         # Atualização das barras de escala dinâmica
-        self.ids.seta_rpm.pos = (self.ids.seta_rpm.pos[0], self._meas['values']['encoder']/400*self.ids.barra_rpm.size[1]) # 400:valor máximo de cada barra, alterar pro valor certo
-        self.ids.seta_nm.pos = (self.ids.seta_nm.pos[0], self._meas['values']['torque']/400*self.ids.barra_nm.size[1])
-        self.ids.seta_temp.pos = (self.ids.seta_temp.pos[0], self._meas['values']['temp_carc']/400*self.ids.barra_temp.size[1])
-        self.ids.seta_carga.pos = (self.ids.seta_carga.pos[0], self._meas['values']['le_carga']/400*self.ids.barra_carga.size[1])
-        self.ids.seta_vel.pos = (self.ids.seta_vel.pos[0], self._meas['values']['esteira']/400*self.ids.barra_vel.size[1])
+        #self.ids.seta_rpm.pos_hint = (self.ids.seta_rpm.pos_hint[0], self._meas['values']['encoder']/400*self.ids.barra_rpm.size[1]) # 400:valor máximo de cada barra, alterar pro valor certo
+        #self.ids.seta_nm.pos_hint = (self.ids.seta_nm.pos_hint[0], self._meas['values']['torque']/400*self.ids.barra_nm.size[1])
+        #self.ids.seta_temp.pos_hint = (self.ids.seta_temp.pos_hint[0], self._meas['values']['temp_carc']/50*self.ids.barra_temp.size[1])
+        #self.ids.seta_carga.pos_hint = (self.ids.seta_carga.pos_hint[0], self._meas['values']['le_carga']/400*self.ids.barra_carga.size[1])
+        #self.ids.seta_vel.pos_hint = (self.ids.seta_vel.pos_hint[0], self._meas['values']['esteira']/10*self.ids.barra_vel.size[1])
 
     def stopRefresh(self):
         self._updateThread = False

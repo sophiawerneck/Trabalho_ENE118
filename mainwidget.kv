@@ -57,7 +57,7 @@
             id: seta_rpm
             source: 'imgs/seta.png'
             size_hint: 0.04, 0.04
-            pos: (0.17,0.13)
+            pos_hint: {'x':0.17,'y':0.13}
 
         Image:
             id: barra_nm
@@ -68,7 +68,7 @@
             id: seta_nm
             source: 'imgs/seta.png'
             size_hint: 0.04, 0.04
-            pos: (0.27,0.13)
+            pos_hint: {'x':0.27,'y':0.13}
 
         Image:
             id: barra_temp
@@ -79,7 +79,7 @@
             id: seta_temp
             source: 'imgs/seta.png'
             size_hint: 0.04, 0.04
-            pos: (0.37,0.13)
+            pos_hint: {'x':0.37,'y':0.13}
 
 
         Image:
@@ -91,7 +91,7 @@
             id: seta_carga
             source: 'imgs/seta.png'
             size_hint: 0.04, 0.04
-            pos: (0.47,0.67)
+            pos_hint: {'x':0.47,'y':0.67}
 
 
         Image:
@@ -103,7 +103,7 @@
             id: seta_vel
             source: 'imgs/seta.png'
             size_hint: 0.04, 0.04
-            pos: (0.62,0.67)
+            pos_hint: {'x':0.62,'y':0.67}
         
         Label:
             id: indica_driver
@@ -209,11 +209,4 @@
             size_hint:(0.2,0.075)
             padding: 10,10
             on_release: root._comandoPopup.open()
-            
-
-            
-            
-            
-
-            
             
