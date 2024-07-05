@@ -106,10 +106,16 @@ class PidPopup(Popup):
         Construtor da classe PidPopup
         """
         super().__init__(**kwargs)
-        self._SP=0.0
-        self._P=5.0
-        self._I=5.0
-        self._D=5.0
+        self._MV = float (self.ids.mv_escreve.text)
+        self._P = float (self.ids.p.text)
+        self._I = float (self.ids.i.text)
+        self._D = float (self.ids.d.text)
+        
+    def update(self,medida):
+        medida['values']['mv_escreve']= self._MV
+        medida['values']['p']= self._P
+        medida['values']['i']= self._I
+        medida['values']['d']= self._D
 
 class SelectDataGraphPopup(Popup):
     def __init__(self,**kwargs):

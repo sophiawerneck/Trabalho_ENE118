@@ -200,7 +200,7 @@ class MainWidget(BoxLayout):
             self._lock.release()
         elif tipo=='FP':
             self._lock.acquire()
-            print(self.escreveFloat(addr,float(value*div)))
+            print(self.escreveFloat(addr,float(value)*div))
             self._lock.release()
 
     def lerFloat(self,addr):
@@ -217,11 +217,9 @@ class MainWidget(BoxLayout):
         """
         Método para a escrita de um "float" na tabela MODBUS
         """
-        self._lock.acquire()
         builder = BinaryPayloadBuilder(byteorder=Endian.BIG, wordorder=Endian.LITTLE)
         builder.add_32bit_float(data)
         payload = builder.to_registers()
-        self._lock.release()
         return self._modbusClient.write_multiple_registers(addr,payload)
     
     def selPartida(self, part):
@@ -290,33 +288,29 @@ class MainWidget(BoxLayout):
         self.writeData(self._tags['atuadores']['atv31_velocidade']['addr'], '4X', self._tags['atuadores']['atv31_velocidade']['div'],valor)
             
 
-    def setMV(self):
+    def setMV(self,mv):
         """
-        Método para definir o setPoint da carga na esteira
+        Método para definir o valor da variável manipulada da carga na esteira em %
         """
-        self._MV= (self.ids.mv_escreve.text)
-        self.writeData(self._tags['atuadores']['mv_escreve']['addr'],'FP',self._tags['atuadores']['mv_escreve']['div'],self._MV)
+        self.writeData(self._tags['atuadores']['mv_escreve']['addr'],'FP',self._tags['atuadores']['mv_escreve']['div'],float(mv))
     
-    def setP(self):
+    def setP(self,prop):
         """
         Método para definir o controle proporcional
         """
-        self._P= (self.ids.p.text)
-        self.writeData(self._tags['atuadores']['p']['addr'],'FP',self._tags['atuadores']['p']['div'],self._P)
+        self.writeData(self._tags['atuadores']['p']['addr'],'FP',self._tags['atuadores']['p']['div'],float(prop))
 
-    def setI(self):
+    def setI(self,integ):
         """
         Método para definir o controle integral
         """
-        self._I= (self.ids.i.text)
-        self.writeData(self._tags['atuadores']['i']['addr'],'FP',self._tags['atuadores']['i']['div'],self._I)
+        self.writeData(self._tags['atuadores']['i']['addr'],'FP',self._tags['atuadores']['i']['div'],float(integ))
 
-    def setD(self):
+    def setD(self,deriv):
         """
         Método para definir o controle derivativo
         """
-        self._D= (self.ids.d.text)
-        self.writeData(self._tags['atuadores']['d']['addr'],'FP',self._tags['atuadores']['d']['div'],self._D)
+        self.writeData(self._tags['atuadores']['d']['addr'],'FP',self._tags['atuadores']['d']['div'],float(deriv))
         
 
     def updateGUI(self):
@@ -326,9 +320,9 @@ class MainWidget(BoxLayout):
         partida=self._meas['values']['indica_driver'] #armazena o valor selecionado do tipo de partida
         if partida == 1:
             self.ids['indica_driver'].text='Soft-start'
-        if partida == 2:
+        elif partida == 2:
             self.ids['indica_driver'].text='Inversor'
-        if partida == 3:
+        elif partida == 3:
             self.ids['indica_driver'].text='Direta'
         self.ids['encoder'].text=str(self._meas['values']['encoder'])+' RPM'
         self.ids['torque'].text=str(self._meas['values']['torque'])+' N.m'
@@ -338,6 +332,7 @@ class MainWidget(BoxLayout):
 
         self._medicoesPopup.update(self._meas)
         self._comandoPopup.update(self._meas)
+        self._pidPopup.update(self._meas)
 
         # Atualização das barras de escala dinâmica
         #self.ids.seta_rpm.pos_hint = (self.ids.seta_rpm.pos_hint[0], self._meas['values']['encoder']/400*self.ids.barra_rpm.size[1]) # 400:valor máximo de cada barra, alterar pro valor certo

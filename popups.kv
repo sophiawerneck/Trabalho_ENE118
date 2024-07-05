@@ -517,11 +517,10 @@
             TextInput:
                 id: mv_escreve
                 font_size: 14
-                text: '-'
+                text: '0.0'
                 haligh: "center"
                 valign: "middle"
-                padding: 8,8,8,8
-                on_text_validate: app.root.setMV()
+                on_text_validate: app.root.setMV(mv_escreve.text)
                 multiline: False
             Label:
                 text: "P:"
@@ -532,8 +531,7 @@
                 text: "5.0"
                 haligh: "center"
                 valign: "middle"
-                padding: 8,8,8,8
-                on_text_validate: app.root.setP()   
+                on_text_validate: app.root.setP(p.text)   
                 multiline: False
             Label:
                 text: "I:"
@@ -544,8 +542,7 @@
                 text: "5.0"
                 haligh: "center"
                 valign: "middle"
-                padding: 8,8,8,8
-                on_text_validate: app.root.setI()
+                on_text_validate: app.root.setI(i.text)
                 multiline: False
             Label:
                 text: "D:"
@@ -556,34 +553,9 @@
                 text: "5.0"
                 haligh: "center"
                 valign: "middle"
-                padding: 8,8,8,8
-                on_text_validate: app.root.setD()
+                on_text_validate: app.root.setD(d.text)
                 multiline: False
         
-        GridLayout:
-            cols: 2
-            rows: 4
-            Label:
-                text: 'Status do PID:'
-                font_size: 14
-            Label:
-                id: statusPID
-                text: 'Desligado'
-                font_size: 14
-                haligh: "center"
-                valign: "middle"
-        GridLayout:
-            cols: 2
-            rows: 5
-            Label: 
-                text: "PV"
-                font_size: 14
-            Label:
-                id: le_carga
-                text: '-.- Kgf/cm²'
-                font_size: 14
-                haligh: "center"
-                valign: "middle"
 
 <SelectDataGraphPopup>:
     title: " Escolha do dado"
