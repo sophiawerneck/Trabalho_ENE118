@@ -335,11 +335,11 @@ class MainWidget(BoxLayout):
         self._pidPopup.update(self._meas)
 
         # Atualização das barras de escala dinâmica
-        #self.ids.seta_rpm.pos_hint = (self.ids.seta_rpm.pos_hint[0], self._meas['values']['encoder']/400*self.ids.barra_rpm.size[1]) # 400:valor máximo de cada barra, alterar pro valor certo
-        #self.ids.seta_nm.pos_hint = (self.ids.seta_nm.pos_hint[0], self._meas['values']['torque']/400*self.ids.barra_nm.size[1])
-        #self.ids.seta_temp.pos_hint = (self.ids.seta_temp.pos_hint[0], self._meas['values']['temp_carc']/50*self.ids.barra_temp.size[1])
-        #self.ids.seta_carga.pos_hint = (self.ids.seta_carga.pos_hint[0], self._meas['values']['le_carga']/400*self.ids.barra_carga.size[1])
-        #self.ids.seta_vel.pos_hint = (self.ids.seta_vel.pos_hint[0], self._meas['values']['esteira']/10*self.ids.barra_vel.size[1])
+        self.ids.seta_rpm.pos_hint = {'x': self.ids.seta_rpm.pos_hint['x'], 'y': 0.13 + (0.15/200)*self._meas['values']['encoder']} 
+        self.ids.seta_nm.pos_hint = {'x': self.ids.seta_nm.pos_hint['x'], 'y': 0.13 + (0.15/1)*self._meas['values']['torque']}
+        self.ids.seta_carga.pos_hint = {'x': self.ids.seta_carga.pos_hint['x'], 'y': 0.67 + (0.15/2000)*self._meas['values']['le_carga']}
+        self.ids.seta_vel.pos_hint = {'x': self.ids.seta_vel.pos_hint['x'], 'y': 0.67 + (0.15/20)*self._meas['values']['esteira']}
+        self.ids.seta_temp.pos_hint = {'x': self.ids.seta_temp.pos_hint['x'], 'y': 0.13 + (0.15/70)*self._meas['values']['temp_carc']} # 70:valor máximo da medida da temperatura
 
     def stopRefresh(self):
         self._updateThread = False
