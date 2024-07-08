@@ -1,5 +1,5 @@
 from kivy.uix.boxlayout import BoxLayout
-from popups import ModbusPopup,ScanPopup, ComandoPopup, MedicoesPopup, PidPopup, SelectDataGraphPopup, HistGraphPopup
+from popups import ModbusPopup,ScanPopup, ComandoPopup, MedicoesPopup, PidPopup, SelectDataGraphPopup, HistGraphPopup, DataGraphPopup
 from kivy.core.window import Window
 from pyModbusTCP.client import ModbusClient
 from threading import Thread
@@ -56,7 +56,8 @@ class MainWidget(BoxLayout):
            self._tags['atuadores'][key] = {'addr':value['addr'],'tipo':value['tipo'],'div':value['div']}
 
         self._hgraph= HistGraphPopup(tags=self._tags['modbusaddrs'])
-
+        self._graph = DataGraphPopup(self._max_points, self._tags['modbusaddrs']['temp_carc']['color']) 
+        
     def startDataRead(self, ip, port):
         """
         Método utilizado para configuração do IP e porta do servidor MODBUS e
@@ -335,11 +336,47 @@ class MainWidget(BoxLayout):
         self._pidPopup.update(self._meas)
 
         # Atualização das barras de escala dinâmica
-        self.ids.seta_rpm.pos_hint = {'x': self.ids.seta_rpm.pos_hint['x'], 'y': 0.13 + (0.15/200)*self._meas['values']['encoder']} 
-        self.ids.seta_nm.pos_hint = {'x': self.ids.seta_nm.pos_hint['x'], 'y': 0.13 + (0.15/1)*self._meas['values']['torque']}
+        self.ids.seta_temp.pos_hint = {'x': self.ids.seta_temp.pos_hint['x'], 'y': 0.13 + (0.15/70)*self._meas['values']['temp_carc']} # 70:valor máximo da medida da temperatura
+        self.ids.seta_rpm.pos_hint = {'x': self.ids.seta_rpm.pos_hint['x'], 'y': 0.13 + (0.15/2000)*self._meas['values']['encoder']} # Não tá atualizando
+        self.ids.seta_nm.pos_hint = {'x': self.ids.seta_nm.pos_hint['x'], 'y': 0.13 + (0.15/10)*self._meas['values']['torque']} # Não tá certo o valor, a seta sobe muito rápido
         self.ids.seta_carga.pos_hint = {'x': self.ids.seta_carga.pos_hint['x'], 'y': 0.67 + (0.15/2000)*self._meas['values']['le_carga']}
         self.ids.seta_vel.pos_hint = {'x': self.ids.seta_vel.pos_hint['x'], 'y': 0.67 + (0.15/20)*self._meas['values']['esteira']}
-        self.ids.seta_temp.pos_hint = {'x': self.ids.seta_temp.pos_hint['x'], 'y': 0.13 + (0.15/70)*self._meas['values']['temp_carc']} # 70:valor máximo da medida da temperatura
+        
+        # Atualização dos gráficos
+        if self._graph.ids.checktempcarcx.active == True:
+            self._graph.ids.graph.updateGraph((self._meas['timestamp'],self._meas['values']['temp_carc']),0)
+            self._graph.ids.graph.ylabel = 'Temperatura [°C]'
+            self._graph.ids.graph.y_ticks_major = 5
+            self._graph.ids.graph.ymax = 60
 
+        elif self._graph.ids.checkrpm.active == True:
+            self._graph.ids.graph.updateGraph((self._meas['timestamp'],self._meas['values']['encoder']),0)
+            self._graph.ids.graph.ylabel = 'RPM'
+            self._graph.ids.graph.y_ticks_major = 10
+            self._graph.ids.graph.ymax = 2000
+
+        elif self._graph.ids.checktorquex.active == True:
+            self._graph.ids.graph.updateGraph((self._meas['timestamp'],self._meas['values']['torque']),0)
+            self._graph.ids.graph.ylabel = 'N.m'
+            self._graph.ids.graph.y_ticks_major = 5
+            self._graph.ids.graph.ymax = 0.1
+
+        elif self._graph.ids.checklecargax.active == True:
+            self._graph.ids.graph.updateGraph((self._meas['timestamp'],self._meas['values']['le_carga']),0)
+            self._graph.ids.graph.ylabel = 'kgf/cm²'
+            self._graph.ids.graph.y_ticks_major = 5
+            self._graph.ids.graph.ymax = 20
+
+        elif self._graph.ids.checkesteirax.active == True:
+            self._graph.ids.graph.updateGraph((self._meas['timestamp'],self._meas['values']['esteira']),0)
+            self._graph.ids.graph.ylabel = 'm/min'
+            self._graph.ids.graph.y_ticks_major = 5
+            self._graph.ids.graph.ymax = 20
+
+        elif self._graph.ids.checkcorrentex.active == True:
+            self._graph.ids.graph.updateGraph((self._meas['timestamp'],self._meas['values']['corrente_media']),0)
+            self._graph.ids.graph.ylabel = 'A'
+            self._graph.ids.graph.y_ticks_major = 5
+            self._graph.ids.graph.ymax = 20
     def stopRefresh(self):
         self._updateThread = False
