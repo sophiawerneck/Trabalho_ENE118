@@ -142,3 +142,13 @@ class HistGraphPopup(Popup):
 
 class LabeledCheckBoxHistGraph(BoxLayout):
       pass
+
+class DataGraphPopup(Popup):
+    def __init__(self, xmax, plot_color, **kwargs):
+        super().__init__(**kwargs)
+        self.plot = LinePlot(line_width=1.5, color=plot_color)
+        self.ids.graph.add_plot(self.plot) # Adiciona a linha 
+        self.ids.graph.xmax = xmax
+
+class LabeledCheckBoxDataGraph(BoxLayout):
+    pass
