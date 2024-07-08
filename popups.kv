@@ -668,3 +668,104 @@
             id: label
             font_size: 10
             bold: True
+
+<DataGraphPopup>:
+    title: "Gráficos das medidas"
+    BoxLayout:
+        orientation: 'vertical'
+        TimeSeriesGraph:
+            id: graph
+            xLabel: 'Horário'
+            yLabel: 'Valor []'
+            blackground_color: 0.5,0.5,0.5,0.5
+            x_ticks_minor: 1 # Número de subdivisões do eixo horizontal
+            x_ticks_major: 5 # 5
+            y_ticks_major: 5 # A cada 5 graus um subdivisão
+            x_grid_label: True
+            y_grid_label: True
+            padding: 5
+            x_grid: True
+            y_grid: True
+            xmin: 0
+            ymax: 30 # 60
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: (1,0.1)
+            CheckBox:
+                id: checktempcarcx
+                group: "select_gp"
+            CheckBox:
+                id: checkrpm
+                group: "select_gp"
+            CheckBox:
+                id: checktorquex
+                group: "select_gp"
+            CheckBox:
+                id: checklecargax
+                group: "select_gp"
+            CheckBox:
+                id: checkesteirax
+                group: "select_gp"
+            CheckBox:
+                id: checkcorrentex
+                group: "select_gp"
+            
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: (1,0.1)
+            Label:
+                text: "   Temperatura na carcaça (ºC)"
+                font_size: '9sp'
+            Label:
+                text: "Frequência de rotação (Hz)"
+                font_size: '9sp'
+            Label:
+                text: "   Torque (N.m)"
+                font_size: '9sp'
+            Label:
+                text: "   Carga do motor (Kgf/m²)"
+                font_size: '9sp'
+            Label:
+                text: "   Velocidade da esteira (m/min)"
+                font_size: '9sp'
+            Label:
+                text: "   Corrente (A)"
+                font_size: '9sp'
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: (1,0.05)
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: (0.5,1)
+                Label:
+                    size_hint: (0.3,1)
+                    text: "Número de pontos do gráfico"
+                LabeledCheckBoxDataGraph:
+                    id:mp20
+                    on_kv_post: 
+                        self.ids.label.text = '20'
+                        self.ids.checkbox.group = 'cb_group'
+                LabeledCheckBoxDataGraph:
+                    id:mp50
+                    on_kv_post: 
+                        self.ids.label.text = '50'
+                        self.ids.checkbox.group = 'cb_group'
+                LabeledCheckBoxDataGraph:
+                    id:mp100
+                    on_kv_post: 
+                        self.ids.label.text = '100'
+                        self.ids.checkbox.group = 'cb_group'
+            Button:
+                text: "Fechar"
+                size_hint:(0.2,1)
+                on_release: root.dismiss()
+
+
+<LabeledCheckBoxDataGraph>:
+    orientation: 'horizontal'
+    size_hint: (0.1,1)
+    CheckBox:
+        id: checkbox
+        on_active: app.root._graph.ids.graph.setMaxPoints(int(label.text),0) if app.root is not None else None
+    Label:
+        id:label
