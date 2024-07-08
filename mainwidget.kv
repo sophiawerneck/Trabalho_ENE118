@@ -180,7 +180,9 @@
             background_normal: 'imgs/graph_icon.jpg'
             background_down: 'imgs/graph_icon.jpg'
             pos_hint: {'x':0.002, 'y': 0.002}
-            
+	    on_release:
+                root._graph.open()
+
         Button:
             text :'Medições'
             pos_hint:{'x':0.05, 'y':0.73}
