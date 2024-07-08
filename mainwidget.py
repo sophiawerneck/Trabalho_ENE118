@@ -23,7 +23,8 @@ class MainWidget(BoxLayout):
     _uptadeWidgets = True
     _tags = {'modbusaddrs':{},'atuadores':{}}
     _dados={}
-
+    _max_points = 20
+    
     def __init__(self, **kwargs):
         """
         Construtor do widget principal
