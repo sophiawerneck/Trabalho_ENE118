@@ -48,7 +48,7 @@
             source: 'imgs/esteira2.png'
 
 
-	Image:
+	    Image:
             id: barra_rpm
             source: 'imgs/barra.png'
             size_hint: (0.15, 0.15)
@@ -107,11 +107,11 @@
         
         Label:
             id: indica_driver
-            text: '-.-'
+            text: 'Desligado'
             font_size: 20
             bold: True
             halign: 'center'
-            pos_hint: {'x':-0.22, 'y':0.02}
+            pos_hint: {'x':-0.215, 'y':0.02}
             color: 0,0,0,1       
         Label:
             id: encoder
@@ -180,8 +180,7 @@
             background_normal: 'imgs/graph_icon.jpg'
             background_down: 'imgs/graph_icon.jpg'
             pos_hint: {'x':0.002, 'y': 0.002}
-	    on_release:
-                root._graph.open()
+	        on_release: root._graph.open()
 
         Button:
             text :'Medições'

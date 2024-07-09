@@ -1,5 +1,5 @@
 from kivy.uix.boxlayout import BoxLayout
-from popups import ModbusPopup,ScanPopup, ComandoPopup, MedicoesPopup, PidPopup, SelectDataGraphPopup, HistGraphPopup, DataGraphPopup
+from popups import ModbusPopup,ScanPopup, ComandoPopup, MedicoesPopup, PidPopup, HistGraphPopup, DataGraphPopup
 from kivy.core.window import Window
 from pyModbusTCP.client import ModbusClient
 from threading import Thread
@@ -14,6 +14,7 @@ from models import DadosEsteira
 from kivy_garden.graph import LinePlot
 from db import Base,Session,engine
 from timeseriesgraph import TimeSeriesGraph
+
 
 class MainWidget(BoxLayout):
     """
@@ -38,14 +39,14 @@ class MainWidget(BoxLayout):
         self._medicoesPopup = MedicoesPopup()
         self._comandoPopup = ComandoPopup()
         self._pidPopup = PidPopup()
-        self._selectData= SelectDataGraphPopup()
+        #self._selectData= SelectDataGraphPopup()
         self._modbusClient = ModbusClient(host = self._serverIP, port = self._serverPort)
         self._meas = {} #armazenar as tags
         self._meas['timestamp'] = None
         self._meas['values'] = {} # Valores das tags do sistema
         self._lock=Lock()
-        self._selection='potAtivaTotal'
         self._session = Session()
+        Base.metadata.create_all(engine)
         
         # Leitura das tags (readData vai iterar o dicionario)
         for key,value in kwargs.get('modbusaddrs').items():
@@ -93,7 +94,7 @@ class MainWidget(BoxLayout):
             while self._uptadeWidgets:
                 self.readData() #ler os dados MODBUS
                 self.updateGUI()#atualizar a interface
-                #self.updateDataBank() #inserir os dados no BD
+                self.updateDataBank() #inserir os dados no BD
                 sleep(self._scan_time/1000)     
         except Exception as e:
             self._modbusClient.close()
@@ -105,8 +106,12 @@ class MainWidget(BoxLayout):
         """
         try:
             self._dados['timestamp']=self._meas['timestamp']
-            for key in self._tags['modbusaddrs']:
-                self._dados[key]=self._meas['values'][key]
+            self._dados['torque']= self._meas['values']['torque']
+            self._dados['encoder']= self._meas['values']['encoder']
+            self._dados['le_carga']= self._meas['values']['le_carga']
+            self._dados['esteira'] = self._meas['values']['esteira']
+            self._dados['temp_carc']= self._meas['values']['temp_carc']
+            self._dados['corrente_media']= self._meas['values']['corrente_media']
             dado=DadosEsteira(**self._dados)
             self._lock.acquire()
             self._session.add(dado)
@@ -149,7 +154,7 @@ class MainWidget(BoxLayout):
                     for s in sensorAtivo:
                         if key==s:
                             p= LinePlot(line_width=1)
-                            #p.points = [(x, results[x][key]) for x in range(0,len(results))]
+                            p.points = [(x, results[x][key]) for x in range(0,len(results))]
                             self._hgraph.ids.graph.add_plot(p)
                             self._hgraph.ids.graph.ymax=self._tags['modbusaddrs'][s]['escalamax']
                             self._hgraph.ids.graph.y_ticks_major=self._tags['modbusaddrs'][s]['escalamax']/5
@@ -239,20 +244,27 @@ class MainWidget(BoxLayout):
         with self._lock:
             tipo = self._modbusClient.read_holding_registers(self._tags['modbusaddrs']['indica_driver']['addr'],1)[0]
         print(tipo)
+        partida= self._meas['values']['indica_driver']
         match tipo:
             case 1: #soft-start
                 print ("ligou")
+                if partida == 1:
+                    self.ids['indica_driver'].text='Soft-start'
                 self.writeData(self._tags['atuadores']['ats48']['addr'], '4X', self._tags['atuadores']['ats48']['div'], 1)
                 self.writeData(self._tags['atuadores']['ats48_acc']['addr'], '4X', self._tags['atuadores']['ats48_acc']['div'],kwargs.get('acel'))
                 self.writeData(self._tags['atuadores']['ats48_dcc']['addr'], '4X', self._tags['atuadores']['ats48_dcc']['div'],kwargs.get('desacel'))
             case 2: #inversor
                 print ("ligou")
+                if partida == 2:
+                    self.ids['indica_driver'].text='Inversor'
                 self.writeData(self._tags['atuadores']['atv31']['addr'], '4X', self._tags['atuadores']['atv31']['div'], 1)
                 self.writeData(self._tags['atuadores']['atv31_acc']['addr'], '4X', self._tags['atuadores']['atv31_acc']['div'],kwargs.get('acel'))
                 self.writeData(self._tags['atuadores']['atv31_dcc']['addr'], '4X', self._tags['atuadores']['atv31_dcc']['div'],kwargs.get('desacel'))
                 self.writeData(self._tags['atuadores']['atv31_velocidade']['addr'], '4X', self._tags['atuadores']['atv31_velocidade']['div'],kwargs.get('vel'))
             case 3: #direta
                 print ("ligou")
+                if partida == 3:
+                    self.ids['indica_driver'].text='Direta'
                 self.writeData(self._tags['atuadores']['tesys']['addr'], '4X', self._tags['atuadores']['tesys']['div'], 1)
             
     def desligaEsteira(self):
@@ -319,6 +331,7 @@ class MainWidget(BoxLayout):
         """
         Método para atualização da interface gráfica a partir dos dados lidos
         """
+        '''
         partida=self._meas['values']['indica_driver'] #armazena o valor selecionado do tipo de partida
         if partida == 1:
             self.ids['indica_driver'].text='Soft-start'
@@ -326,6 +339,7 @@ class MainWidget(BoxLayout):
             self.ids['indica_driver'].text='Inversor'
         elif partida == 3:
             self.ids['indica_driver'].text='Direta'
+        '''
         self.ids['encoder'].text=str(self._meas['values']['encoder'])+' RPM'
         self.ids['torque'].text=str(self._meas['values']['torque'])+' N.m'
         self.ids['temp_carc'].text=str(self._meas['values']['temp_carc'])+' °C'

@@ -1,4 +1,4 @@
-#kivy 1.11.1
+#:kivy 1.11.1
 <ModbusPopup>:
     title: "Configurações MODBUS"
     size_hint_y: None
@@ -555,49 +555,6 @@
                 valign: "middle"
                 on_text_validate: app.root.setD(d.text)
                 multiline: False
-        
-
-<SelectDataGraphPopup>:
-    title: " Escolha do dado"
-    size_hint_y: 1
-    size_hint_x: 1.5
-    BoxLayout:
-        orientation: "horizontal"
-        BoxLayout:
-            orientation: "vertical"
-            CheckBox:
-                id: checkencoder
-                group: "select_group"
-                on_active: app.root._selection='encoder' if app.root is not None else None
-            CheckBox:
-                id: checktorque
-                group: "select_group"
-                on_active: app.root._selection='torque' if app.root is not None else None
-            CheckBox:
-                id: checktempcarc
-                group: "select_group"
-                on_active: app.root._selection='temp_carc' if app.root is not None else None
-            CheckBox:
-                id: checklecarga
-                group: "select_group"
-                on_active: app.root._selection='le_carga' if app.root is not None else None
-            CheckBox:
-                id: checkesteira
-                group: "select_group"
-                on_active: app.root._selection='esteira' if app.root is not None else None
-            
-        BoxLayout:
-            orientation: "vertical"
-            Label:
-                text: "Frequência de rotação (Hz)"
-            Label:
-                text: "Torque (N.m)"
-            Label:
-                text: "Temperatura na carcaça (ºC)"
-            Label:
-                text: "Carga do motor (Kgf/m²)"
-            Label:
-                text: "Velocidade da esteira (m/min)"
 
 <HistGraphPopup>:
     title: " Histórico de dados"

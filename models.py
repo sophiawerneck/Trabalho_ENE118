@@ -14,6 +14,7 @@ class DadosEsteira(Base):
     temp_carc = Column(Float)
     le_carga = Column(Float)
     esteira = Column(Float)
+    corrente_media = Column(Float)
     # acrescentar as variaveis aqui
 
     def get_resultsdic(self):
@@ -23,4 +24,5 @@ class DadosEsteira(Base):
         'torque':self.torque,
         'temp_carc':self.temp_carc,
         'le_carga':self.le_carga,
-        'esteira':self.esteira}
+        'esteira':self.esteira,
+        'corrente_media':self.corrente_media}

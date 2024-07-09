@@ -118,9 +118,6 @@ class PidPopup(Popup):
         medida['values']['i']= self._I
         medida['values']['d']= self._D
 
-class SelectDataGraphPopup(Popup):
-    def __init__(self,**kwargs):
-        super().__init__(**kwargs)
 
 class HistGraphPopup(Popup):
     def __init__(self, **kwargs):
@@ -132,7 +129,7 @@ class HistGraphPopup(Popup):
         self.ids.sensores.clear_widgets() 
         count = 0
         for key, value in self.tags.items():
-            if count < 5:  
+            if count < 6:  
                 cb = LabeledCheckBoxHistGraph()
                 cb.ids.label.text = key
                 cb.id = key

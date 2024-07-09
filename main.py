@@ -12,12 +12,6 @@ class MainApp(App):
         """
         self._widget = MainWidget(scan_time =1000,server_ip='192.168.0.11',server_port=502,
         modbusaddrs={
-            'indica_driver':{ 
-            'addr':1216,
-            'legenda': 'Partida do motor',
-            'tipo': '4X',
-            'div': 1,
-            },
 
             'encoder':{
             'addr':884,
@@ -51,6 +45,20 @@ class MainApp(App):
             'addr':710,
             'legenda': 'Carga na esteira',
             'tipo': 'FP',
+            'div': 1,
+            },
+
+            'corrente_media':{ 
+            'addr':845,
+            'legenda': 'Corrente Média',
+            'tipo': '4X',
+            'div': 100,
+            },
+
+            'indica_driver':{ 
+            'addr':1216,
+            'legenda': 'Partida do motor',
+            'tipo': '4X',
             'div': 1,
             },
             
@@ -113,13 +121,6 @@ class MainApp(App):
             'frequencia':{ 
             'addr':830,
             'legenda': 'Medida Frequência da Rede',
-            'tipo': '4X',
-            'div': 100,
-            },
-
-            'corrente_media':{ 
-            'addr':845,
-            'legenda': 'Corrente Média',
             'tipo': '4X',
             'div': 100,
             },
