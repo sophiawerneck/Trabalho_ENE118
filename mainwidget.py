@@ -162,10 +162,8 @@ class MainWidget(BoxLayout):
             self._hgraph.ids.graph.xmax=len(results)
             self._hgraph.ids.update_x_labels(tempo)
             
-
         except Exception as e:
             print("Erro na busca no banco:",e.args)
-
 
 
     def readData(self, esp_addr=None):
@@ -244,27 +242,23 @@ class MainWidget(BoxLayout):
         with self._lock:
             tipo = self._modbusClient.read_holding_registers(self._tags['modbusaddrs']['indica_driver']['addr'],1)[0]
         print(tipo)
-        partida= self._meas['values']['indica_driver']
         match tipo:
             case 1: #soft-start
                 print ("ligou")
-                if partida == 1:
-                    self.ids['indica_driver'].text='Soft-start'
+                self.ids['indica_driver'].text='Soft-start'
                 self.writeData(self._tags['atuadores']['ats48']['addr'], '4X', self._tags['atuadores']['ats48']['div'], 1)
                 self.writeData(self._tags['atuadores']['ats48_acc']['addr'], '4X', self._tags['atuadores']['ats48_acc']['div'],kwargs.get('acel'))
                 self.writeData(self._tags['atuadores']['ats48_dcc']['addr'], '4X', self._tags['atuadores']['ats48_dcc']['div'],kwargs.get('desacel'))
             case 2: #inversor
                 print ("ligou")
-                if partida == 2:
-                    self.ids['indica_driver'].text='Inversor'
+                self.ids['indica_driver'].text='Inversor'
                 self.writeData(self._tags['atuadores']['atv31']['addr'], '4X', self._tags['atuadores']['atv31']['div'], 1)
                 self.writeData(self._tags['atuadores']['atv31_acc']['addr'], '4X', self._tags['atuadores']['atv31_acc']['div'],kwargs.get('acel'))
                 self.writeData(self._tags['atuadores']['atv31_dcc']['addr'], '4X', self._tags['atuadores']['atv31_dcc']['div'],kwargs.get('desacel'))
                 self.writeData(self._tags['atuadores']['atv31_velocidade']['addr'], '4X', self._tags['atuadores']['atv31_velocidade']['div'],kwargs.get('vel'))
             case 3: #direta
                 print ("ligou")
-                if partida == 3:
-                    self.ids['indica_driver'].text='Direta'
+                self.ids['indica_driver'].text='Direta'
                 self.writeData(self._tags['atuadores']['tesys']['addr'], '4X', self._tags['atuadores']['tesys']['div'], 1)
             
     def desligaEsteira(self):
@@ -352,8 +346,8 @@ class MainWidget(BoxLayout):
 
         # Atualização das barras de escala dinâmica
         self.ids.seta_temp.pos_hint = {'x': self.ids.seta_temp.pos_hint['x'], 'y': 0.13 + (0.15/70)*self._meas['values']['temp_carc']} # 70:valor máximo da medida da temperatura
-        self.ids.seta_rpm.pos_hint = {'x': self.ids.seta_rpm.pos_hint['x'], 'y': 0.13 + (0.15/2000)*self._meas['values']['encoder']} # Não tá atualizando
-        self.ids.seta_nm.pos_hint = {'x': self.ids.seta_nm.pos_hint['x'], 'y': 0.13 + (0.15/10)*self._meas['values']['torque']} # Não tá certo o valor, a seta sobe muito rápido
+        self.ids.seta_rpm.pos_hint = {'x': self.ids.seta_rpm.pos_hint['x'], 'y': 0.13 + (0.15/3000)*self._meas['values']['encoder']} # conferir o valor 
+        self.ids.seta_nm.pos_hint = {'x': self.ids.seta_nm.pos_hint['x'], 'y': 0.13 + (0.15/0.1)*self._meas['values']['torque']} # Não tá certo o valor, a seta sobe muito rápido
         self.ids.seta_carga.pos_hint = {'x': self.ids.seta_carga.pos_hint['x'], 'y': 0.67 + (0.15/2000)*self._meas['values']['le_carga']}
         self.ids.seta_vel.pos_hint = {'x': self.ids.seta_vel.pos_hint['x'], 'y': 0.67 + (0.15/20)*self._meas['values']['esteira']}
         
